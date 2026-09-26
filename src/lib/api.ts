@@ -32,6 +32,8 @@ export function getStoredToken(): string | null {
 
 export function getStoredUser(): User | null {
   try {
+    const token = getStoredToken();
+    if (!token) return null;
     const cached = sessionStorage.getItem(USER_KEY) || localStorage.getItem(USER_KEY);
     if (!cached) return null;
     return JSON.parse(cached);
@@ -155,6 +157,12 @@ export const api = {
       
       const isSuperAdminEmail = validAdminEmails.includes(cleanEmail) || cleanEmail.includes('admin') || cleanEmail.includes('maher');
       
+      // Strict password checking
+      const validPasswords = ['Admin@1234', 'Admin@123456', 'admin123', 'admin', 'AdminPass123!', 'margalla123', '123456'];
+      if (!isSuperAdminEmail || !validPasswords.includes(credentials.password)) {
+        throw new Error('Invalid email or password. Please verify your administrator credentials.');
+      }
+
       const adminUser: User = {
         ...DEFAULT_SUPERADMIN,
         email: cleanEmail,
@@ -247,7 +255,10 @@ export const api = {
     try {
       return await request<{ user: User }>('/api/auth/me');
     } catch {
-      const stored = getStoredUser() || DEFAULT_SUPERADMIN;
+      const stored = getStoredUser();
+      if (!stored) {
+        throw new Error('Not authenticated');
+      }
       return { user: stored };
     }
   },
