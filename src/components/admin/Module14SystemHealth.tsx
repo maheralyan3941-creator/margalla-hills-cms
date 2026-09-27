@@ -71,7 +71,7 @@ export function Module14SystemHealth({ onAddRedirect, showToast }: Module14Syste
       if (h) setHealth(h);
       if (inc) setIncidents(inc);
       if (l404) setLogs404(l404);
-      if (bks) setBackups(bks);
+      if (bks) setBackups(bks as any);
     } finally {
       setLoading(false);
     }
