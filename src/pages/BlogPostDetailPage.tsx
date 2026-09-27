@@ -28,6 +28,23 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
     }
   }, [slug, initialPosts]);
 
+  // CRITICAL: Table of Contents generator must ALWAYS run before any conditional return!
+  const tableOfContents = useMemo(() => {
+    if (!post || !post.content) return [];
+    const lines = post.content.split('\n');
+    const toc: { text: string; level: number; id: string }[] = [];
+    lines.forEach(line => {
+      if (line.startsWith('## ')) {
+        const text = line.replace('## ', '').trim();
+        toc.push({ text, level: 2, id: text.toLowerCase().replace(/[^\w]+/g, '-') });
+      } else if (line.startsWith('### ')) {
+        const text = line.replace('### ', '').trim();
+        toc.push({ text, level: 3, id: text.toLowerCase().replace(/[^\w]+/g, '-') });
+      }
+    });
+    return toc;
+  }, [post?.content]);
+
   if (!post) {
     return (
       <div className="bg-[#0A0A0A] text-slate-300 min-h-screen flex items-center justify-center">
@@ -76,7 +93,7 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Saffron & Sage Artisanal Kitchen',
+      name: 'Margalla Hills Artisanal Kitchen',
       logo: {
         '@type': 'ImageObject',
         url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80'
@@ -92,202 +109,133 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
     .filter(p => p.id !== post.id && (p.category === post.category || p.tags.some(t => post.tags.includes(t))))
     .slice(0, 3);
 
-  // Table of Contents generator from Markdown H2 and H3
-  const tableOfContents = useMemo(() => {
-    const lines = post.content.split('\n');
-    const toc: { text: string; level: number; id: string }[] = [];
-    lines.forEach(line => {
-      if (line.startsWith('## ')) {
-        const text = line.replace('## ', '').trim();
-        toc.push({ text, level: 2, id: text.toLowerCase().replace(/[^\w]+/g, '-') });
-      } else if (line.startsWith('### ')) {
-        const text = line.replace('### ', '').trim();
-        toc.push({ text, level: 3, id: text.toLowerCase().replace(/[^\w]+/g, '-') });
-      }
-    });
-    return toc;
-  }, [post.content]);
-
   return (
     <div className="bg-[#0A0A0A] text-slate-300 min-h-screen py-10">
       <SEOHead
         seo={postSEO}
         schemaData={schemaArticle}
-        contentForAudit={post.content}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Breadcrumb Navigation */}
-        <nav aria-label="Breadcrumb" className="mb-6">
-          <ol className="flex items-center gap-2 text-xs text-slate-400 font-mono">
-            <li>
-              <button onClick={() => navigate('/')} className="hover:text-emerald-400 cursor-pointer">Home</button>
-            </li>
-            <li><ChevronRight className="w-3 h-3 text-slate-600" /></li>
-            <li>
-              <button onClick={() => navigate('/blog')} className="hover:text-emerald-400 cursor-pointer">Blog</button>
-            </li>
-            <li><ChevronRight className="w-3 h-3 text-slate-600" /></li>
-            <li>
-              <button onClick={() => navigate('/blog')} className="capitalize hover:text-emerald-400 cursor-pointer">{post.category}</button>
-            </li>
-            <li><ChevronRight className="w-3 h-3 text-slate-600" /></li>
-            <li className="text-white font-semibold truncate max-w-xs">{post.title}</li>
-          </ol>
-        </nav>
-
-        {/* Back Button */}
-        <div className="mb-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        {/* Back Link */}
+        <div className="mb-6">
           <button
             onClick={() => navigate('/blog')}
-            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-300 hover:text-emerald-400 transition cursor-pointer"
+            className="text-xs text-slate-400 hover:text-white flex items-center gap-1.5 transition cursor-pointer"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to All Articles</span>
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* Main Article Content */}
-          <main className="lg:col-span-8 space-y-8">
-            <article className="bg-[#121212] rounded-3xl border border-slate-800 shadow-sm p-6 sm:p-10 lg:p-12">
-              {/* Category & Date Metadata */}
-              <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 font-mono mb-4">
-                <span className="px-3 py-1 bg-black/80 border border-white/10 text-emerald-400 rounded-md font-semibold uppercase tracking-wider">
-                  {post.category}
-                </span>
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5 text-emerald-400" /> Published: {post.publishedAt.split('T')[0]}
-                </span>
-                <span>&bull;</span>
-                <span className="flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5 text-emerald-400" /> {post.readTimeMinutes} min read
-                </span>
-              </div>
+        {/* Article Header */}
+        <div className="space-y-4 mb-8">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="px-2.5 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold rounded-full uppercase tracking-wider">
+              {post.category.replace(/-/g, ' ')}
+            </span>
+            <span className="text-xs text-slate-500 flex items-center gap-1">
+              <Clock className="w-3.5 h-3.5" />
+              {post.readTimeMinutes} min read
+            </span>
+            <span className="text-xs text-slate-500 flex items-center gap-1">
+              <Calendar className="w-3.5 h-3.5" />
+              {new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            </span>
+          </div>
 
-              {/* Title & Excerpt */}
-              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
-                {post.title}
-              </h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-white tracking-tight leading-tight">
+            {post.title}
+          </h1>
 
-              <p className="text-base text-slate-400 mt-4 leading-relaxed font-sans pb-6 border-b border-slate-800">
-                {post.excerpt}
-              </p>
+          <p className="text-slate-400 text-base sm:text-lg leading-relaxed">
+            {post.excerpt}
+          </p>
 
-              {/* Featured Image */}
-              <div className="my-8 rounded-2xl overflow-hidden shadow-sm border border-slate-800">
-                <img
-                  src={post.featuredImage}
-                  alt={post.imageAltText || post.title}
-                  className="w-full h-80 sm:h-96 object-cover"
-                />
-                {post.imageAltText && (
-                  <div className="px-4 py-2 bg-[#0A0A0A] text-[11px] text-slate-400 font-mono border-t border-slate-800 flex items-center justify-between">
-                    <span>ALT Text: {post.imageAltText}</span>
-                    <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3" /> SEO Optimized
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Markdown Content Body */}
-              <div className="prose prose-invert max-w-none prose-headings:font-serif prose-headings:font-bold prose-headings:text-white prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3 prose-p:text-slate-300 prose-p:leading-relaxed prose-p:text-sm sm:prose-p:text-base prose-li:text-sm prose-li:text-slate-300 prose-strong:text-white prose-a:text-emerald-400 hover:prose-a:underline">
-                <Markdown>{post.content}</Markdown>
-              </div>
-
-              {/* Article Tags */}
-              <div className="mt-12 pt-6 border-t border-slate-800 flex flex-wrap items-center gap-2">
-                <span className="text-xs font-semibold text-slate-400 uppercase font-mono mr-2">Target Keywords:</span>
-                {post.tags.map((tag, i) => (
-                  <span key={i} className="text-xs bg-[#0A0A0A] text-slate-300 px-3 py-1 rounded-lg border border-slate-800 flex items-center gap-1">
-                    <Tag className="w-3 h-3 text-emerald-400" /> {tag}
-                  </span>
-                ))}
-              </div>
-
-              {/* Author Box */}
-              <div className="mt-8 p-6 bg-[#0A0A0A] rounded-2xl border border-slate-800 flex items-center gap-4">
-                <img
-                  src={post.author.avatar}
-                  alt={post.author.name}
-                  className="w-14 h-14 rounded-full object-cover border border-slate-700"
-                />
-                <div>
-                  <h4 className="text-sm font-bold text-white">{post.author.name}</h4>
-                  <p className="text-xs text-emerald-400 font-medium">{post.author.role}</p>
-                  <p className="text-xs text-slate-400 mt-1">Specialist in modern Technical SEO architecture and structured data integration.</p>
-                </div>
-              </div>
-            </article>
-          </main>
-
-          {/* Sidebar */}
-          <aside className="lg:col-span-4 space-y-8">
-            {/* Table of Contents Box */}
-            {tableOfContents.length > 0 && (
-              <div className="bg-[#121212] p-6 rounded-2xl border border-slate-800 shadow-sm sticky top-24">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-white font-mono mb-4 flex items-center gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                  Table of Contents
-                </h3>
-                <nav className="space-y-2 text-xs">
-                  {tableOfContents.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className={`text-slate-400 hover:text-emerald-400 font-medium transition cursor-default ${
-                        item.level === 3 ? 'pl-4 text-slate-500' : ''
-                      }`}
-                    >
-                      {item.level === 2 ? '• ' : '- '} {item.text}
-                    </div>
-                  ))}
-                </nav>
-
-                <div className="mt-6 pt-4 border-t border-slate-800">
-                  <button
-                    onClick={() => navigate('/contact')}
-                    className="w-full py-2.5 px-4 bg-amber-500 hover:bg-amber-400 text-black rounded-xl text-xs font-serif font-bold flex items-center justify-center gap-2 transition cursor-pointer shadow"
-                  >
-                    <span>Reserve Dining Experience</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Related Publications */}
-            {relatedPosts.length > 0 && (
-              <div className="bg-[#121212] p-6 rounded-2xl border border-slate-800 shadow-sm">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-white font-mono mb-4">
-                  Related Publications
-                </h3>
-                <div className="space-y-4">
-                  {relatedPosts.map((rPost) => (
-                    <div
-                      key={rPost.id}
-                      onClick={() => navigate(`/blog/${rPost.slug}`)}
-                      className="group cursor-pointer flex gap-3 items-start"
-                    >
-                      <img
-                        src={rPost.featuredImage}
-                        alt={rPost.title}
-                        className="w-16 h-16 rounded-xl object-cover shrink-0 border border-slate-800 group-hover:opacity-90"
-                      />
-                      <div>
-                        <h4 className="font-serif text-xs font-bold text-white group-hover:text-emerald-400 transition line-clamp-2">
-                          {rPost.title}
-                        </h4>
-                        <span className="text-[10px] text-slate-400 font-mono block mt-1">
-                          {rPost.publishedAt.split('T')[0]} &bull; {rPost.readTimeMinutes}m read
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </aside>
+          {/* Author Badge */}
+          <div className="flex items-center gap-3 pt-2">
+            <img
+              src={post.author.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80'}
+              alt={post.author.name}
+              className="w-10 h-10 rounded-full object-cover border border-neutral-700"
+            />
+            <div>
+              <div className="text-sm font-semibold text-white">{post.author.name}</div>
+              <div className="text-xs text-slate-400">{post.author.role}</div>
+            </div>
+          </div>
         </div>
+
+        {/* Featured Image */}
+        {post.featuredImage && (
+          <div className="mb-10 rounded-2xl overflow-hidden border border-neutral-800 shadow-2xl">
+            <img
+              src={post.featuredImage}
+              alt={post.imageAltText || post.title}
+              className="w-full h-72 sm:h-96 object-cover"
+            />
+          </div>
+        )}
+
+        {/* Table of Contents */}
+        {tableOfContents.length > 0 && (
+          <div className="mb-10 p-5 bg-neutral-900/60 border border-neutral-800 rounded-2xl">
+            <div className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <Layers className="w-4 h-4" />
+              <span>Table of Contents</span>
+            </div>
+            <ul className="space-y-2 text-xs">
+              {tableOfContents.map((item, idx) => (
+                <li key={idx} className={item.level === 3 ? 'pl-4' : ''}>
+                  <a
+                    href={`#${item.id}`}
+                    className="text-slate-400 hover:text-amber-400 transition"
+                  >
+                    • {item.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Main Content Markdown */}
+        <div className="prose prose-invert prose-amber max-w-none text-slate-300 leading-relaxed text-sm sm:text-base space-y-4">
+          <Markdown>{post.content}</Markdown>
+        </div>
+
+        {/* Tags */}
+        {post.tags && post.tags.length > 0 && (
+          <div className="mt-12 pt-6 border-t border-neutral-800 flex flex-wrap items-center gap-2">
+            <span className="text-xs text-slate-500 font-mono flex items-center gap-1">
+              <Tag className="w-3.5 h-3.5" /> Tags:
+            </span>
+            {post.tags.map((t, i) => (
+              <span key={i} className="px-2.5 py-1 bg-neutral-900 border border-neutral-800 rounded-lg text-xs text-slate-400">
+                #{t}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Related Posts */}
+        {relatedPosts.length > 0 && (
+          <div className="mt-16 pt-10 border-t border-neutral-800">
+            <h3 className="text-lg font-bold text-white mb-6">Related Articles</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {relatedPosts.map(rp => (
+                <div
+                  key={rp.id}
+                  onClick={() => navigate(`/blog/${rp.slug}`)}
+                  className="bg-neutral-900/40 border border-neutral-800 rounded-xl p-4 hover:border-amber-500/40 transition cursor-pointer"
+                >
+                  <div className="text-xs text-amber-400 font-mono mb-1">{rp.category}</div>
+                  <h4 className="text-xs font-semibold text-white line-clamp-2">{rp.title}</h4>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
