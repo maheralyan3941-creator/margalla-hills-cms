@@ -1,0 +1,22 @@
+# Margalla Hills SEO Crawl Directives
+User-agent: *
+Allow: /
+Allow: /menu
+Allow: /menu/
+Allow: /blog
+Allow: /blog/
+Allow: /about
+Allow: /story
+Allow: /contact
+Allow: /chef
+Allow: /locations
+Allow: /experience
+Allow: /reservations
+
+# Disallow internal control panel
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+
+# Canonical Sitemap Index
+Sitemap: https://margallahills.com/sitemap.xml
