@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BlogPost, BlogCategory } from '../../types';
 import { api } from '../../lib/api';
 import {
+  Link2,
+  BookmarkPlus,
   FileText,
   Plus,
   Eye,
@@ -408,14 +410,71 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
               />
             </div>
 
-            {/* Row 5: Full Article Content (Markdown) */}
+            {/* Row 5: Full Article Content with Link Insertion Helper */}
             <div>
-              <div className="flex items-center justify-between mb-1.5">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                 <label className="text-xs font-semibold text-neutral-300">
                   Full Article Body (Markdown Supported)
                 </label>
-                <div className="flex items-center gap-2 text-[10px] text-neutral-500 font-mono">
-                  <span>Supports ## Headings, **bold**, lists, code</span>
+                <div className="flex flex-wrap items-center gap-2">
+                  {/* Quick Internal Linking Helper */}
+                  <div className="flex items-center gap-1 bg-neutral-900 border border-neutral-700/80 rounded-lg p-1">
+                    <span className="text-[10px] text-amber-400 font-semibold px-1.5 flex items-center gap-1">
+                      <Link2 className="w-3 h-3" /> Internal Link:
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const anchor = prompt("Internal Link Text (e.g. Signature Charcoal BBQ):", "Our Signature Menu");
+                        const target = prompt("Target URL path (e.g. /menu, /reservations, /about, /wine-cellar):", "/menu");
+                        if (anchor && target) {
+                          setContent((prev) => prev + `\n[${anchor}](${target})\n`);
+                        }
+                      }}
+                      className="px-2 py-0.5 bg-neutral-800 hover:bg-neutral-700 text-white rounded text-[10px] font-medium transition cursor-pointer"
+                    >
+                      + Add Internal
+                    </button>
+                    <select
+                      onChange={(e) => {
+                        if (e.target.value) {
+                          const [url, title] = e.target.value.split("|");
+                          setContent((prev) => prev + ` [${title}](${url}) `);
+                          e.target.value = "";
+                        }
+                      }}
+                      className="bg-black text-[10px] text-neutral-300 border border-neutral-800 rounded px-1.5 py-0.5 focus:outline-none"
+                    >
+                      <option value="">Quick Presets...</option>
+                      <option value="/menu|Fine Dining Menu">Menu (/menu)</option>
+                      <option value="/reservations|Reserve a Table">Reservations (/reservations)</option>
+                      <option value="/about|Our Hillside Heritage">About (/about)</option>
+                      <option value="/wine-cellar|Grand Wine Cellar">Wine Cellar (/wine-cellar)</option>
+                      <option value="/locations|Global Flagships">Locations (/locations)</option>
+                      <option value="/botanicals|Artisan Spices">Botanicals (/botanicals)</option>
+                      <option value="/contact|Contact Concierge">Contact (/contact)</option>
+                    </select>
+                  </div>
+
+                  {/* Quick External Linking Helper */}
+                  <div className="flex items-center gap-1 bg-neutral-900 border border-neutral-700/80 rounded-lg p-1">
+                    <span className="text-[10px] text-sky-400 font-semibold px-1.5 flex items-center gap-1">
+                      <ExternalLink className="w-3 h-3" /> External Link:
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const anchor = prompt("External Link Text (e.g. Michelin Guide or Forbes):", "Michelin Guide Review");
+                        const url = prompt("External Target URL (must start with https://):", "https://");
+                        if (anchor && url) {
+                          setContent((prev) => prev + `\n[${anchor}](${url}){:target="_blank" rel="noopener noreferrer"}\n`);
+                        }
+                      }}
+                      className="px-2 py-0.5 bg-sky-950/60 hover:bg-sky-900/80 text-sky-300 border border-sky-800/50 rounded text-[10px] font-medium transition cursor-pointer"
+                    >
+                      + Add External
+                    </button>
+                  </div>
                 </div>
               </div>
               <textarea
