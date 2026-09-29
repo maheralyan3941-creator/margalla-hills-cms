@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { api, getStoredUser, clearSession } from './lib/api';
 import { User } from './types';
 import { Navbar } from './components/Navbar';
@@ -7,42 +7,48 @@ import { DemoNoticeBanner } from './components/DemoNoticeBanner';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useSEORuntime } from './lib/seoRuntime';
 
-// Pages
+// Critical Homepage for lightning fast mobile First Contentful Paint
 import { HomePage } from './pages/HomePage';
-import { MenuPage } from './pages/MenuPage';
-import { DishDetailPage } from './pages/DishDetailPage';
-import { TastingMenuPage } from './pages/TastingMenuPage';
-import { WineCellarPage } from './pages/WineCellarPage';
-import { WineDetailPage } from './pages/WineDetailPage';
-import { PrivateDiningPage } from './pages/PrivateDiningPage';
-import { LocationsPage } from './pages/LocationsPage';
-import { BotanicalsIndexPage } from './pages/BotanicalsIndexPage';
-import { BotanicalDetailPage } from './pages/BotanicalDetailPage';
-import { HeritageIndexPage } from './pages/HeritageIndexPage';
-import { HeritageDetailPage } from './pages/HeritageDetailPage';
-import { BlogListPage } from './pages/BlogListPage';
-import { BlogPostDetailPage } from './pages/BlogPostDetailPage';
-import { CaseStudiesPage } from './pages/CaseStudiesPage';
-import { CaseStudyDetailPage } from './pages/CaseStudyDetailPage';
-import { AboutPage } from './pages/AboutPage';
-import { ServicesPage } from './pages/ServicesPage';
-import { ContactPage } from './pages/ContactPage';
-import { GalleryPage } from './pages/GalleryPage';
-import { SitemapHubPage } from './pages/SitemapHubPage';
-import { ProgrammaticCateringPage } from './pages/ProgrammaticCateringPage';
-import { Compendium400Page } from './pages/Compendium400Page';
-import { AdminLoginPage } from './pages/AdminLoginPage';
-import { AdminDashboardPage } from './pages/AdminDashboardPage';
-import { NotFoundPage } from './pages/NotFoundPage';
+
+// Lazy-load sub-pages so mobile devices download ONLY initial landing bundle
+const MenuPage = lazy(() => import('./pages/MenuPage').then(m => ({ default: m.MenuPage })));
+const DishDetailPage = lazy(() => import('./pages/DishDetailPage').then(m => ({ default: m.DishDetailPage })));
+const TastingMenuPage = lazy(() => import('./pages/TastingMenuPage').then(m => ({ default: m.TastingMenuPage })));
+const WineCellarPage = lazy(() => import('./pages/WineCellarPage').then(m => ({ default: m.WineCellarPage })));
+const WineDetailPage = lazy(() => import('./pages/WineDetailPage').then(m => ({ default: m.WineDetailPage })));
+const PrivateDiningPage = lazy(() => import('./pages/PrivateDiningPage').then(m => ({ default: m.PrivateDiningPage })));
+const LocationsPage = lazy(() => import('./pages/LocationsPage').then(m => ({ default: m.LocationsPage })));
+const BotanicalsIndexPage = lazy(() => import('./pages/BotanicalsIndexPage').then(m => ({ default: m.BotanicalsIndexPage })));
+const BotanicalDetailPage = lazy(() => import('./pages/BotanicalDetailPage').then(m => ({ default: m.BotanicalDetailPage })));
+const HeritageIndexPage = lazy(() => import('./pages/HeritageIndexPage').then(m => ({ default: m.HeritageIndexPage })));
+const HeritageDetailPage = lazy(() => import('./pages/HeritageDetailPage').then(m => ({ default: m.HeritageDetailPage })));
+const BlogListPage = lazy(() => import('./pages/BlogListPage').then(m => ({ default: m.BlogListPage })));
+const BlogPostDetailPage = lazy(() => import('./pages/BlogPostDetailPage').then(m => ({ default: m.BlogPostDetailPage })));
+const CaseStudiesPage = lazy(() => import('./pages/CaseStudiesPage').then(m => ({ default: m.CaseStudiesPage })));
+const CaseStudyDetailPage = lazy(() => import('./pages/CaseStudyDetailPage').then(m => ({ default: m.CaseStudyDetailPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const ServicesPage = lazy(() => import('./pages/ServicesPage').then(m => ({ default: m.ServicesPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
+const GalleryPage = lazy(() => import('./pages/GalleryPage').then(m => ({ default: m.GalleryPage })));
+const SitemapHubPage = lazy(() => import('./pages/SitemapHubPage').then(m => ({ default: m.SitemapHubPage })));
+const ProgrammaticCateringPage = lazy(() => import('./pages/ProgrammaticCateringPage').then(m => ({ default: m.ProgrammaticCateringPage })));
+const Compendium400Page = lazy(() => import('./pages/Compendium400Page').then(m => ({ default: m.Compendium400Page })));
+const AdminLoginPage = lazy(() => import('./pages/AdminLoginPage').then(m => ({ default: m.AdminLoginPage })));
+const AdminDashboardPage = lazy(() => import('./pages/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
+
+const PageLoader = () => (
+  <div className="min-h-[50vh] flex items-center justify-center py-20">
+    <div className="w-10 h-10 border-2 border-amber-500/30 border-t-amber-500 rounded-full animate-spin"></div>
+  </div>
+);
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState<string>(() => window.location.pathname || '/');
   const [currentUser, setCurrentUser] = useState<User | null>(() => getStoredUser());
 
-  // Dynamic SEO head tags and tracking runtime
   useSEORuntime(currentPath);
 
-  // Listen to popstate for browser back/forward buttons
   useEffect(() => {
     const onPopState = () => {
       setCurrentPath(window.location.pathname || '/');
@@ -51,14 +57,14 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
-  // Verify stored session with backend on load
   useEffect(() => {
     api.getCurrentUser()
       .then(res => {
         if (res && res.user) setCurrentUser(res.user);
+        else setCurrentUser(null);
       })
       .catch(() => {
-        // session expired or invalid
+        setCurrentUser(null);
       });
   }, []);
 
@@ -80,195 +86,80 @@ export default function App() {
     navigate('/');
   };
 
-  // Route Dispatcher
   const renderContent = () => {
     const path = currentPath;
 
-    // Homepage
     if (path === '/' || path === '') {
       return <HomePage navigate={navigate} />;
     }
 
-    // Menu list
-    if (path === '/menu') {
-      return <MenuPage navigate={navigate} />;
-    }
-
-    // Tasting Menu
-    if (path === '/tasting-menu') {
-      return <TastingMenuPage navigate={navigate} />;
-    }
-
-    // Hillside Deals & Combos
-    if (path === '/deals') {
-      return <MenuPage navigate={navigate} initialCategory="deals" />;
-    }
-
-    // Wine Cellar
-    if (path === '/wine-cellar') {
-      return <WineCellarPage navigate={navigate} />;
-    }
-
-    // Wine Allocation Detail: /wine/:slug
-    if (path.startsWith('/wine/')) {
-      const slug = path.replace('/wine/', '');
-      return <WineDetailPage slug={slug} navigate={navigate} />;
-    }
-
-    // Botanicals & Spices Index
-    if (path === '/botanicals') {
-      return <BotanicalsIndexPage navigate={navigate} />;
-    }
-
-    // Botanical Detail: /botanicals/:slug
-    if (path.startsWith('/botanicals/')) {
-      const slug = path.replace('/botanicals/', '');
-      return <BotanicalDetailPage slug={slug} navigate={navigate} />;
-    }
-
-    // Heritage Articles Index
-    if (path === '/heritage') {
-      return <HeritageIndexPage navigate={navigate} />;
-    }
-
-    // Heritage Article Detail: /heritage/:slug
-    if (path.startsWith('/heritage/')) {
-      const slug = path.replace('/heritage/', '');
-      return <HeritageDetailPage slug={slug} navigate={navigate} />;
-    }
-
-    // 400 Chapters Gastronomy Compendium (Endless Scroll)
-    if (path === '/compendium' || path === '/400-pages' || path === '/400-chapters') {
-      return <Compendium400Page navigate={navigate} />;
-    }
-
-    // HTML Sitemap Directory
-    if (path === '/sitemap') {
-      return <SitemapHubPage navigate={navigate} />;
-    }
-
-    // Services Page
-    if (path === '/services' || path === '/catering') {
-      return <ServicesPage navigate={navigate} />;
-    }
-
-    // Private Dining
-    if (path === '/private-dining') {
-      return <PrivateDiningPage navigate={navigate} />;
-    }
-
-    // Locations
-    if (path === '/locations') {
-      return <LocationsPage navigate={navigate} />;
-    }
-
-    if (path.startsWith('/locations/')) {
-      const citySlug = path.replace('/locations/', '');
-      return <ProgrammaticCateringPage citySlug={citySlug} navigate={navigate} />;
-    }
-
-    // Dish Detail: /menu/:category/:slug or /dish/:slug
-    if (path.startsWith('/menu/')) {
-      const parts = path.replace('/menu/', '').split('/');
-      const slug = parts[parts.length - 1];
-      if (slug) {
-        return <DishDetailPage slug={slug} navigate={navigate} />;
-      }
-      return <MenuPage navigate={navigate} />;
-    }
-
-    if (path.startsWith('/dish/')) {
-      const slug = path.replace('/dish/', '');
-      return <DishDetailPage slug={slug} navigate={navigate} />;
-    }
-
-    // Blog list
-    if (path === '/blog') {
-      return <BlogListPage navigate={navigate} />;
-    }
-
-    // Blog Post Detail: /blog/:slug
-    if (path.startsWith('/blog/')) {
-      const slug = path.replace('/blog/', '');
-      return <BlogPostDetailPage slug={slug} navigate={navigate} />;
-    }
-
-    // Case Studies list
-    if (path === '/case-studies') {
-      return <CaseStudiesPage navigate={navigate} />;
-    }
-
-    // Case Study Detail: /case-studies/:slug
-    if (path.startsWith('/case-studies/')) {
-      const slug = path.replace('/case-studies/', '');
-      return <CaseStudyDetailPage slug={slug} navigate={navigate} />;
-    }
-
-    // Gallery
-    if (path === '/gallery') {
-      return <GalleryPage navigate={navigate} />;
-    }
-
-    // About
-    if (path === '/about') {
-      return <AboutPage navigate={navigate} />;
-    }
-
-    // Contact & Reservations
-    if (path === '/contact') {
-      return <ContactPage navigate={navigate} />;
-    }
-
-    // Programmatic Local Catering: /catering/:city
-    if (path.startsWith('/catering/')) {
-      const citySlug = path.replace('/catering/', '');
-      return <ProgrammaticCateringPage citySlug={citySlug} navigate={navigate} />;
-    }
-
-    // SEO Practice Laboratory & Academy (Protected inside Admin Panel)
-    if (path === '/seo-lab' || path === '/seo-academy') {
-      if (!currentUser) {
-        return <AdminLoginPage onLoginSuccess={handleLoginSuccess} navigate={navigate} />;
-      }
-      return (
-        <AdminDashboardPage
-          currentUser={currentUser}
-          onLogout={handleLogout}
-          navigate={navigate}
-        />
-      );
-    }
-
-    // Sign Up & Log In Routes
-    if (path === '/signup' || path === '/register' || path === '/login') {
-      if (!currentUser) {
-        return <AdminLoginPage onLoginSuccess={handleLoginSuccess} navigate={navigate} />;
-      }
-      return (
-        <AdminDashboardPage
-          currentUser={currentUser}
-          onLogout={handleLogout}
-          navigate={navigate}
-        />
-      );
-    }
-
-    // Admin CMS & SEO Control Panel (Accessible via direct /admin path)
-    if (path.startsWith('/admin')) {
-      if (!currentUser) {
-        return <AdminLoginPage onLoginSuccess={handleLoginSuccess} navigate={navigate} />;
-      }
-      return (
-        <AdminDashboardPage
-          currentUser={currentUser}
-          onLogout={handleLogout}
-          navigate={navigate}
-        />
-      );
-    }
-
-    // Fallback 404
-    return <NotFoundPage navigate={navigate} />;
+    return (
+      <Suspense fallback={<PageLoader />}>
+        {(() => {
+          if (path === '/menu') return <MenuPage navigate={navigate} />;
+          if (path === '/tasting-menu') return <TastingMenuPage navigate={navigate} />;
+          if (path === '/deals') return <MenuPage navigate={navigate} initialCategory="deals" />;
+          if (path === '/wine-cellar') return <WineCellarPage navigate={navigate} />;
+          if (path.startsWith('/wine/')) {
+            const slug = path.replace('/wine/', '');
+            return <WineDetailPage slug={slug} navigate={navigate} />;
+          }
+          if (path === '/botanicals') return <BotanicalsIndexPage navigate={navigate} />;
+          if (path.startsWith('/botanicals/')) {
+            const slug = path.replace('/botanicals/', '');
+            return <BotanicalDetailPage slug={slug} navigate={navigate} />;
+          }
+          if (path === '/heritage') return <HeritageIndexPage navigate={navigate} />;
+          if (path.startsWith('/heritage/')) {
+            const slug = path.replace('/heritage/', '');
+            return <HeritageDetailPage slug={slug} navigate={navigate} />;
+          }
+          if (path === '/compendium' || path === '/400-pages' || path === '/400-chapters') {
+            return <Compendium400Page navigate={navigate} />;
+          }
+          if (path === '/sitemap') return <SitemapHubPage navigate={navigate} />;
+          if (path === '/services' || path === '/catering') return <ServicesPage navigate={navigate} />;
+          if (path === '/private-dining') return <PrivateDiningPage navigate={navigate} />;
+          if (path === '/locations') return <LocationsPage navigate={navigate} />;
+          if (path.startsWith('/locations/')) {
+            const citySlug = path.replace('/locations/', '');
+            return <ProgrammaticCateringPage citySlug={citySlug} navigate={navigate} />;
+          }
+          if (path.startsWith('/menu/')) {
+            const parts = path.replace('/menu/', '').split('/');
+            const slug = parts[parts.length - 1];
+            if (slug) return <DishDetailPage slug={slug} navigate={navigate} />;
+            return <MenuPage navigate={navigate} />;
+          }
+          if (path.startsWith('/dish/')) {
+            const slug = path.replace('/dish/', '');
+            return <DishDetailPage slug={slug} navigate={navigate} />;
+          }
+          if (path === '/blog') return <BlogListPage navigate={navigate} />;
+          if (path.startsWith('/blog/')) {
+            const slug = path.replace('/blog/', '');
+            return <BlogPostDetailPage slug={slug} navigate={navigate} />;
+          }
+          if (path === '/case-studies') return <CaseStudiesPage navigate={navigate} />;
+          if (path.startsWith('/case-studies/')) {
+            const slug = path.replace('/case-studies/', '');
+            return <CaseStudyDetailPage slug={slug} navigate={navigate} />;
+          }
+          if (path === '/gallery') return <GalleryPage navigate={navigate} />;
+          if (path === '/about') return <AboutPage navigate={navigate} />;
+          if (path === '/contact') return <ContactPage navigate={navigate} />;
+          if (path.startsWith('/catering/')) {
+            const citySlug = path.replace('/catering/', '');
+            return <ProgrammaticCateringPage citySlug={citySlug} navigate={navigate} />;
+          }
+          if (path === '/seo-lab' || path === '/seo-academy' || path === '/signup' || path === '/register' || path === '/login' || path.startsWith('/admin')) {
+            if (!currentUser) return <AdminLoginPage onLoginSuccess={handleLoginSuccess} navigate={navigate} />;
+            return <AdminDashboardPage currentUser={currentUser} onLogout={handleLogout} navigate={navigate} />;
+          }
+          return <NotFoundPage navigate={navigate} />;
+        })()}
+      </Suspense>
+    );
   };
 
   const isAdminView = currentPath.startsWith('/admin') && currentUser;
