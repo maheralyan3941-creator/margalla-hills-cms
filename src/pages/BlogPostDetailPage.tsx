@@ -28,10 +28,50 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
     }
   }, [slug, initialPosts]);
 
-  // Table of Contents generator from Markdown H2 and H3 - ALWAYS before any conditional return!
+  // Smart formatted content fallback: if user pasted plain text without markdown hashes, detect headings automatically
+  const formattedContent = useMemo(() => {
+    if (!post || !post.content) return '';
+    const raw = post.content;
+    if (/^#{1,6}\s+/m.test(raw)) {
+      return raw;
+    }
+    const lines = raw.split('\n');
+    const result: string[] = [];
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmed = line.trim();
+      if (!trimmed) {
+        result.push('');
+        continue;
+      }
+      if (/^\d+[\.\)]\s+/.test(trimmed) && trimmed.length < 80 && !trimmed.endsWith('.')) {
+        result.push(`## ${trimmed}`);
+        continue;
+      }
+      const subHeadingKeywords = ['pros:', 'cons:', 'what to eat:', 'what to check:', 'best for:', 'atmosphere:', 'verdict:', 'highlights:', 'conclusion:'];
+      if (subHeadingKeywords.some(k => trimmed.toLowerCase().startsWith(k))) {
+        result.push(`### ${trimmed}`);
+        continue;
+      }
+      if (
+        trimmed.length > 3 &&
+        trimmed.length < 65 &&
+        !trimmed.endsWith('.') &&
+        !trimmed.endsWith(',') &&
+        (i === 0 || lines[i - 1].trim() === '')
+      ) {
+        result.push(`## ${trimmed}`);
+        continue;
+      }
+      result.push(line);
+    }
+    return result.join('\n');
+  }, [post?.content]);
+
+  // Table of Contents generator from Markdown H2 and H3
   const tableOfContents = useMemo(() => {
-    if (!post || !post.content) return [];
-    const lines = post.content.split("\n");
+    if (!formattedContent) return [];
+    const lines = formattedContent.split("\n");
     const toc: { text: string; level: number; id: string }[] = [];
     lines.forEach(line => {
       if (line.startsWith("## ")) {
@@ -43,7 +83,7 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
       }
     });
     return toc;
-  }, [post?.content]);
+  }, [formattedContent]);
 
   if (!post) {
     return (
@@ -62,12 +102,14 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
     );
   }
 
+  const safeTags = post.tags || [];
+
   const postSEO = post.seo || {
-    seoTitle: `${post.title} | Saffron & Sage SEO Lab`,
+    seoTitle: `${post.title} | Margalla Hills SEO Article`,
     metaDescription: post.excerpt,
     slug: post.slug,
-    focusKeyword: post.tags[0] || 'restaurant seo',
-    secondaryKeywords: post.tags,
+    focusKeyword: safeTags[0] || 'margalla hills dining',
+    secondaryKeywords: safeTags,
     canonicalUrl: `/blog/${post.slug}`,
     robotsIndex: true,
     robotsFollow: true,
@@ -88,12 +130,12 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
     dateModified: post.updatedAt || post.publishedAt,
     author: {
       '@type': 'Person',
-      name: post.author.name,
-      jobTitle: post.author.role
+      name: post.author?.name || 'Margalla Hills Culinary Team',
+      jobTitle: post.author?.role || 'SEO & Culinary Contributor'
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Saffron & Sage Artisanal Kitchen',
+      name: 'Margalla Hills Luxury Dining',
       logo: {
         '@type': 'ImageObject',
         url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80'
@@ -106,10 +148,8 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
   };
 
   const relatedPosts = posts
-    .filter(p => p.id !== post.id && (p.category === post.category || p.tags.some(t => post.tags.includes(t))))
+    .filter(p => p.id !== post.id && (p.category === post.category || (p.tags && p.tags.some(t => safeTags.includes(t)))))
     .slice(0, 3);
-
-
 
   return (
     <div className="bg-[#0A0A0A] text-slate-300 min-h-screen py-10">
@@ -160,7 +200,7 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
                   {post.category}
                 </span>
                 <span className="flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5 text-emerald-400" /> Published: {post.publishedAt.split('T')[0]}
+                  <Calendar className="w-3.5 h-3.5 text-emerald-400" /> Published: {post.publishedAt?.split('T')[0]}
                 </span>
                 <span>&bull;</span>
                 <span className="flex items-center gap-1">
@@ -194,10 +234,49 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
                 )}
               </div>
 
-              {/* Markdown Content Body with Smart Internal / External Link Routing */}
-              <div className="prose prose-invert max-w-none prose-headings:font-serif prose-headings:font-bold prose-headings:text-white prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3 prose-p:text-slate-300 prose-p:leading-relaxed prose-p:text-sm sm:prose-p:text-base prose-li:text-sm prose-li:text-slate-300 prose-strong:text-white">
+              {/* Markdown Content Body with Smart Internal / External Link Routing & Inner Image Styling */}
+              <div className="prose prose-invert max-w-none prose-headings:font-serif prose-headings:font-bold prose-headings:text-white prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-slate-800/80 prose-h2:pb-2 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:text-slate-300 prose-p:leading-relaxed prose-p:text-sm sm:prose-p:text-base prose-li:text-sm prose-li:text-slate-300 prose-strong:text-white">
                 <Markdown
                   components={{
+                    h2: ({ node, children, ...props }) => {
+                      const text = String(children || '');
+                      const id = text.toLowerCase().replace(/[^\w]+/g, '-');
+                      return (
+                        <h2 id={id} className="font-serif text-2xl font-bold text-white mt-10 mb-4 pb-2 border-b border-slate-800 scroll-mt-24" {...props}>
+                          {children}
+                        </h2>
+                      );
+                    },
+                    h3: ({ node, children, ...props }) => {
+                      const text = String(children || '');
+                      const id = text.toLowerCase().replace(/[^\w]+/g, '-');
+                      return (
+                        <h3 id={id} className="font-serif text-xl font-bold text-amber-400 mt-8 mb-3 scroll-mt-24" {...props}>
+                          {children}
+                        </h3>
+                      );
+                    },
+                    img: ({ node, src, alt, ...props }) => {
+                      return (
+                        <figure className="my-8 rounded-2xl overflow-hidden border border-slate-800 bg-[#0c0c0c] shadow-lg">
+                          <img
+                            src={src}
+                            alt={alt || 'Margalla Hills culinary content'}
+                            className="w-full h-auto max-h-[460px] object-cover rounded-t-2xl"
+                            loading="lazy"
+                            {...props}
+                          />
+                          {alt && (
+                            <figcaption className="px-4 py-2 bg-[#0A0A0A] text-xs text-slate-400 border-t border-slate-850 flex items-center justify-between font-sans">
+                              <span>{alt}</span>
+                              <span className="text-[10px] text-emerald-400 font-mono font-medium flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3" /> Image ALT Verified
+                              </span>
+                            </figcaption>
+                          )}
+                        </figure>
+                      );
+                    },
                     a: ({ node, href, children, ...props }) => {
                       const isExternal = href?.startsWith("http://") || href?.startsWith("https://");
                       if (isExternal) {
@@ -230,33 +309,37 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
                     },
                   }}
                 >
-                  {post.content}
+                  {formattedContent}
                 </Markdown>
               </div>
 
               {/* Article Tags */}
-              <div className="mt-12 pt-6 border-t border-slate-800 flex flex-wrap items-center gap-2">
-                <span className="text-xs font-semibold text-slate-400 uppercase font-mono mr-2">Target Keywords:</span>
-                {post.tags.map((tag, i) => (
-                  <span key={i} className="text-xs bg-[#0A0A0A] text-slate-300 px-3 py-1 rounded-lg border border-slate-800 flex items-center gap-1">
-                    <Tag className="w-3 h-3 text-emerald-400" /> {tag}
-                  </span>
-                ))}
-              </div>
+              {safeTags.length > 0 && (
+                <div className="mt-12 pt-6 border-t border-slate-800 flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-semibold text-slate-400 uppercase font-mono mr-2">Target Keywords:</span>
+                  {safeTags.map((tag, i) => (
+                    <span key={i} className="text-xs bg-[#0A0A0A] text-slate-300 px-3 py-1 rounded-lg border border-slate-800 flex items-center gap-1">
+                      <Tag className="w-3 h-3 text-emerald-400" /> {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
 
               {/* Author Box */}
-              <div className="mt-8 p-6 bg-[#0A0A0A] rounded-2xl border border-slate-800 flex items-center gap-4">
-                <img
-                  src={post.author.avatar}
-                  alt={post.author.name}
-                  className="w-14 h-14 rounded-full object-cover border border-slate-700"
-                />
-                <div>
-                  <h4 className="text-sm font-bold text-white">{post.author.name}</h4>
-                  <p className="text-xs text-emerald-400 font-medium">{post.author.role}</p>
-                  <p className="text-xs text-slate-400 mt-1">Specialist in modern Technical SEO architecture and structured data integration.</p>
+              {post.author && (
+                <div className="mt-8 p-6 bg-[#0A0A0A] rounded-2xl border border-slate-800 flex items-center gap-4">
+                  <img
+                    src={post.author.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80'}
+                    alt={post.author.name || 'Author'}
+                    className="w-14 h-14 rounded-full object-cover border border-slate-700"
+                  />
+                  <div>
+                    <h4 className="text-sm font-bold text-white">{post.author.name || 'Editorial Team'}</h4>
+                    <p className="text-xs text-emerald-400 font-medium">{post.author.role || 'Hospitality & SEO Specialist'}</p>
+                    <p className="text-xs text-slate-400 mt-1">Specialist in modern Technical SEO architecture and structured data integration.</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </article>
           </main>
 
@@ -271,14 +354,21 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
                 </h3>
                 <nav className="space-y-2 text-xs">
                   {tableOfContents.map((item, idx) => (
-                    <div
+                    <button
                       key={idx}
-                      className={`text-slate-400 hover:text-emerald-400 font-medium transition cursor-default ${
-                        item.level === 3 ? 'pl-4 text-slate-500' : ''
+                      type="button"
+                      onClick={() => {
+                        const el = document.getElementById(item.id);
+                        if (el) {
+                          el.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                      className={`block w-full text-left text-slate-400 hover:text-amber-400 font-medium transition cursor-pointer ${
+                        item.level === 3 ? 'pl-4 text-slate-500 hover:text-amber-300' : ''
                       }`}
                     >
                       {item.level === 2 ? '• ' : '- '} {item.text}
-                    </div>
+                    </button>
                   ))}
                 </nav>
 
@@ -316,7 +406,7 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
                           {rPost.title}
                         </h4>
                         <span className="text-[10px] text-slate-400 font-mono block mt-1">
-                          {rPost.publishedAt.split('T')[0]} &bull; {rPost.readTimeMinutes}m read
+                          {rPost.publishedAt?.split('T')[0]} &bull; {rPost.readTimeMinutes}m read
                         </span>
                       </div>
                     </div>
