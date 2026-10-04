@@ -18,7 +18,16 @@ import {
   Clock,
   Layers,
   Tag,
-  AlertCircle
+  AlertCircle,
+  Image as ImageIcon,
+  Wand2,
+  Heading1,
+  Heading2,
+  Heading3,
+  List,
+  Bold,
+  Italic,
+  X
 } from 'lucide-react';
 
 interface ModuleBlogPublishingProps {
@@ -47,10 +56,17 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
   const [excerpt, setExcerpt] = useState('');
   const [content, setContent] = useState('');
   const [featuredImage, setFeaturedImage] = useState('');
+  const [imageAltText, setImageAltText] = useState('');
   const [authorName, setAuthorName] = useState('SEO & Culinary Editorial Team');
   const [status, setStatus] = useState<'published' | 'draft'>('published');
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  // Inner Image Dialog Modal state
+  const [showInnerImageModal, setShowInnerImageModal] = useState(false);
+  const [innerImageUrl, setInnerImageUrl] = useState('');
+  const [innerImageAlt, setInnerImageAlt] = useState('');
+  const [innerImageCaption, setInnerImageCaption] = useState('');
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -79,7 +95,116 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)+/g, '');
       setSlug(generatedSlug);
-      if (!metaTitle) setMetaTitle(newTitle);
+      setMetaTitle(`${newTitle} | Margalla Hills`);
+      if (!imageAltText) {
+        setImageAltText(`${newTitle} - Margalla Hills`);
+      }
+    }
+  };
+
+  // Auto-detect and format headings from raw text (Word, Docs, WhatsApp copy-pastes)
+  const formatHeadingsAutomatically = () => {
+    if (!content.trim()) return;
+    const lines = content.split('\n');
+    const processed: string[] = [];
+    let insideCode = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmed = line.trim();
+
+      if (trimmed.startsWith('```')) {
+        insideCode = !insideCode;
+        processed.push(line);
+        continue;
+      }
+      if (insideCode) {
+        processed.push(line);
+        continue;
+      }
+
+      // Check if already markdown heading
+      if (/^#{1,6}\s+/.test(trimmed)) {
+        processed.push(line);
+        continue;
+      }
+
+      // Numbered items like "1. Restaurant Name" or "1) Restaurant Name"
+      const numberedMatch = trimmed.match(/^(\d+[\.\)])\s+(.*)$/);
+      if (numberedMatch && numberedMatch[2].length < 75 && !numberedMatch[2].endsWith('.')) {
+        processed.push(`## ${trimmed}`);
+        continue;
+      }
+
+      // Short standalone section labels
+      const subHeadingKeywords = ['pros:', 'cons:', 'what to eat:', 'what to check:', 'best for:', 'atmosphere:', 'verdict:', 'highlights:', 'conclusion:'];
+      const isSubHeading = subHeadingKeywords.some(k => trimmed.toLowerCase().startsWith(k));
+      if (isSubHeading) {
+        processed.push(`### ${trimmed}`);
+        continue;
+      }
+
+      // Short title line without terminal punctuation
+      if (
+        trimmed.length > 3 &&
+        trimmed.length < 65 &&
+        !trimmed.endsWith('.') &&
+        !trimmed.endsWith(',') &&
+        !trimmed.endsWith(';') &&
+        (i === 0 || lines[i - 1].trim() === '')
+      ) {
+        processed.push(`## ${trimmed}`);
+        continue;
+      }
+
+      processed.push(line);
+    }
+
+    setContent(processed.join('\n'));
+    if (showToast) showToast('Headings formatted with H2 & H3 tags!');
+  };
+
+  // Automatic smart internal and external link insertion for common high-ranking keywords
+  const applyAutomaticLinkOptimization = () => {
+    if (!content.trim()) return;
+    let updated = content;
+
+    const linkKeywords: { keyword: string; url: string; isExternal?: boolean }[] = [
+      { keyword: 'fine dining menu', url: '/menu' },
+      { keyword: 'our menu', url: '/menu' },
+      { keyword: 'full menu', url: '/menu' },
+      { keyword: 'tasting menu', url: '/tasting-menu' },
+      { keyword: 'wine cellar', url: '/wine-cellar' },
+      { keyword: 'private dining', url: '/private-dining' },
+      { keyword: 'locations', url: '/locations' },
+      { keyword: 'Islamabad restaurants', url: '/locations' },
+      { keyword: 'Margalla Hills', url: '/' },
+      { keyword: 'botanicals', url: '/botanicals' },
+      { keyword: 'culinary heritage', url: '/heritage' },
+      { keyword: 'reserve a table', url: '/contact' },
+      { keyword: 'reservations', url: '/contact' },
+      { keyword: 'contact concierge', url: '/contact' },
+      { keyword: 'Google Maps Local Pack', url: 'https://support.google.com/business', isExternal: true },
+      { keyword: 'Michelin Guide', url: 'https://guide.michelin.com', isExternal: true },
+      { keyword: 'TripAdvisor', url: 'https://www.tripadvisor.com', isExternal: true }
+    ];
+
+    let count = 0;
+    linkKeywords.forEach(({ keyword, url, isExternal }) => {
+      const regex = new RegExp(`(?<!\\[|\\()\\b(${keyword})\\b(?![^\\[]*\\]|\\))`, 'i');
+      if (regex.test(updated)) {
+        updated = updated.replace(regex, (match) => {
+          count++;
+          return isExternal
+            ? `[${match}](${url})`
+            : `[${match}](${url})`;
+        });
+      }
+    });
+
+    setContent(updated);
+    if (showToast) {
+      showToast(count > 0 ? `Successfully linked ${count} keywords!` : 'Content already optimized with links.');
     }
   };
 
@@ -94,6 +219,7 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
     setExcerpt('');
     setContent(`# Introduction\n\nWrite your high-ranking SEO article here targeting your primary keyword.\n\n## 1. Key Insights & Strategy\n\nAdd actionable content with relevant internal links.`);
     setFeaturedImage('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80');
+    setImageAltText('');
     setAuthorName('SEO Content Specialist');
     setStatus('published');
     setFormError(null);
@@ -111,6 +237,7 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
     setExcerpt(post.excerpt);
     setContent(post.content);
     setFeaturedImage(post.featuredImage || '');
+    setImageAltText(post.imageAltText || `${post.title} - Margalla Hills`);
     setAuthorName(post.author.name || 'Editorial Team');
     setStatus(post.status === 'scheduled' ? 'draft' : post.status);
     setFormError(null);
@@ -133,7 +260,7 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
       excerpt: excerpt.trim(),
       content: content,
       featuredImage: featuredImage.trim(),
-      imageAltText: `${title} - Margalla Hills SEO Article`,
+      imageAltText: imageAltText.trim() || `${title.trim()} - Margalla Hills SEO Article`,
       category: category,
       tags: targetKeyword ? [targetKeyword, 'Margalla Hills', 'Islamabad Dining'] : ['Margalla Hills'],
       author: {
@@ -208,108 +335,106 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
         <div>
           <div className="flex items-center gap-2 text-amber-400 text-xs font-mono font-semibold uppercase tracking-wider mb-1.5">
             <FileText className="w-3.5 h-3.5" />
-            <span>Live CMS & Content Publisher</span>
+            <span>Google-Indexed SEO CMS</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white tracking-tight">
-            Real Blog &amp; Article Publisher
+          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight font-serif">
+            Blog &amp; Knowledge Base Publishing
           </h2>
-          <p className="text-neutral-400 text-sm mt-1 max-w-2xl">
-            Publish real, search-optimized articles that go live immediately on <code className="text-amber-400">/blog</code> and individual target URLs to drive organic Google traffic.
+          <p className="text-xs text-neutral-400 mt-1 max-w-xl leading-relaxed">
+            Create high-ranking SEO publications, configure Google canonical URLs, automate heading structures, insert content images with ALT tags, and route keywords with internal links.
           </p>
         </div>
 
         <button
           onClick={openNewPostForm}
-          className="px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-black font-bold text-xs rounded-xl flex items-center gap-2 transition cursor-pointer shadow-[0_0_20px_rgba(245,158,11,0.25)] shrink-0"
+          className="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-black font-extrabold text-xs rounded-xl transition flex items-center gap-2 shadow-[0_0_20px_rgba(245,158,11,0.25)] cursor-pointer shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Write &amp; Publish New Article</span>
         </button>
       </div>
 
-      {/* Editor Modal / Drawer */}
+      {/* Editor Drawer / Form Modal */}
       {isEditing && (
-        <div className="bg-[#121214] border border-amber-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+        <div className="bg-[#121212] p-6 sm:p-8 rounded-2xl border border-amber-500/30 shadow-2xl space-y-6 animate-in slide-in-from-top-4">
           <div className="flex items-center justify-between border-b border-neutral-800 pb-4">
             <div>
-              <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-amber-400" />
-                <span>{editingPostId ? 'Edit Article & Target SEO' : 'Create & Publish New SEO Article'}</span>
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Edit className="w-4 h-4 text-amber-400" />
+                <span>{editingPostId ? 'Edit Article & SEO Directives' : 'Compose & Publish New SEO Article'}</span>
               </h3>
               <p className="text-xs text-neutral-400 mt-0.5">
-                Configure your target URL, focus keyword, meta snippet, and rich article content.
+                Every published post automatically injects schema JSON-LD, OpenGraph cards, and Google Index tags.
               </p>
             </div>
             <button
               onClick={() => setIsEditing(false)}
-              className="px-3 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-white rounded-lg text-xs cursor-pointer"
+              className="text-neutral-400 hover:text-white p-2 text-xs rounded-lg hover:bg-neutral-800 transition cursor-pointer"
             >
-              Cancel
+              ✕ Cancel
             </button>
           </div>
 
           {formError && (
-            <div className="p-3 bg-rose-950/60 border border-rose-800/80 text-rose-300 rounded-xl text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+            <div className="p-3 bg-rose-950/60 border border-rose-800 text-rose-300 rounded-xl text-xs flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{formError}</span>
             </div>
           )}
 
           <form onSubmit={handleSavePost} className="space-y-6">
-            {/* Row 1: Title & Slug */}
+            {/* Row 1: Title & Target Slug */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-neutral-300 mb-1.5">
-                  Article Title *
+                  Article Title (H1) <span className="text-amber-400">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={title}
                   onChange={(e) => handleTitleChange(e.target.value)}
-                  placeholder="e.g., Top 10 Scenic Restaurants in Margalla Hills Islamabad"
-                  className="w-full px-3.5 py-2.5 bg-black border border-neutral-800 rounded-xl text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-amber-400"
+                  placeholder="e.g., Top 10 Scenic Restaurants in Margalla Hills: Dining Above the Clouds"
+                  className="w-full px-3.5 py-2.5 bg-black border border-neutral-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-neutral-300 mb-1.5">
-                  Target URL Slug (Live Path) *
+                  URL Slug (Permanent SEO Route) <span className="text-amber-400">*</span>
                 </label>
-                <div className="flex items-center">
-                  <span className="px-3 py-2.5 bg-neutral-900 border border-r-0 border-neutral-800 rounded-l-xl text-neutral-500 font-mono text-xs">
-                    /blog/
-                  </span>
+                <div className="flex items-center bg-black border border-neutral-800 rounded-xl px-3.5 py-2.5 text-xs">
+                  <span className="text-neutral-500 font-mono mr-1">/blog/</span>
                   <input
                     type="text"
                     required
                     value={slug}
-                    onChange={(e) => setSlug(e.target.value)}
-                    placeholder="top-scenic-restaurants-margalla-hills"
-                    className="w-full px-3.5 py-2.5 bg-black border border-neutral-800 rounded-r-xl text-xs text-amber-400 font-mono focus:outline-none focus:border-amber-400"
+                    onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
+                    placeholder="top-10-scenic-restaurants-margalla-hills"
+                    className="flex-1 bg-transparent text-white font-mono focus:outline-none text-xs"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Row 2: Focus Keyword & Category */}
+            {/* Row 2: Target Keyword & Category */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-neutral-300 mb-1.5">
-                  Primary Target Keyword
+                  Primary Target Focus Keyword
                 </label>
                 <input
                   type="text"
                   value={targetKeyword}
                   onChange={(e) => setTargetKeyword(e.target.value)}
                   placeholder="e.g., restaurants in margalla hills islamabad"
-                  className="w-full px-3.5 py-2.5 bg-black border border-neutral-800 rounded-xl text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-amber-400"
+                  className="w-full px-3.5 py-2.5 bg-black border border-neutral-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-neutral-300 mb-1.5">
-                  Category
+                  Category / Topic Silo
                 </label>
                 <select
                   value={category}
@@ -318,9 +443,11 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
                 >
                   <option value="hospitality-seo">Restaurant &amp; Hospitality SEO</option>
                   <option value="local-seo">Local SEO &amp; Google Maps</option>
-                  <option value="technical-seo">Technical SEO &amp; Schema</option>
-                  <option value="culinary-heritage">Culinary Heritage &amp; Dining Guides</option>
-                  <option value="events-catering">VIP Dining &amp; Private Events</option>
+                  <option value="technical-seo">Schema &amp; Technical SEO</option>
+                  <option value="keyword-research">Keyword Research &amp; Search Intent</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.slug}>{c.name}</option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -368,17 +495,32 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
               </div>
             </div>
 
-            {/* Row 4: Cover Image & Author & Excerpt */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Row 4: Cover Image & Alt Text & Author & Excerpt */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-neutral-300 mb-1.5">
-                  Cover Image URL
+                <label className="block text-xs font-semibold text-neutral-300 mb-1.5 flex items-center gap-1.5">
+                  <ImageIcon className="w-3.5 h-3.5 text-amber-400" />
+                  Cover / Feature Image URL
                 </label>
                 <input
                   type="url"
                   value={featuredImage}
                   onChange={(e) => setFeaturedImage(e.target.value)}
                   placeholder="https://images.unsplash.com/..."
+                  className="w-full px-3.5 py-2.5 bg-black border border-neutral-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-neutral-300 mb-1.5 flex items-center justify-between">
+                  <span>Image ALT Text (SEO)</span>
+                  <span className="text-[10px] text-emerald-400 font-mono">Google Image SEO</span>
+                </label>
+                <input
+                  type="text"
+                  value={imageAltText}
+                  onChange={(e) => setImageAltText(e.target.value)}
+                  placeholder="e.g. Best Italian pasta and pizza in Kohsar Market Islamabad"
                   className="w-full px-3.5 py-2.5 bg-black border border-neutral-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
                 />
               </div>
@@ -410,78 +552,147 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
               />
             </div>
 
-            {/* Row 5: Full Article Content with Link Insertion Helper */}
-            <div>
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                <label className="text-xs font-semibold text-neutral-300">
+            {/* Row 5: Full Article Content with Heading Automation, Inner Image, and Link Helpers */}
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <label className="text-xs font-semibold text-neutral-300 flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-amber-400" />
                   Full Article Body (Markdown Supported)
                 </label>
-                <div className="flex flex-wrap items-center gap-2">
-                  {/* Quick Internal Linking Helper */}
-                  <div className="flex items-center gap-1 bg-neutral-900 border border-neutral-700/80 rounded-lg p-1">
-                    <span className="text-[10px] text-amber-400 font-semibold px-1.5 flex items-center gap-1">
-                      <Link2 className="w-3 h-3" /> Internal Link:
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const anchor = prompt("Internal Link Text (e.g. Signature Charcoal BBQ):", "Our Signature Menu");
-                        const target = prompt("Target URL path (e.g. /menu, /reservations, /about, /wine-cellar):", "/menu");
-                        if (anchor && target) {
-                          setContent((prev) => prev + `\n[${anchor}](${target})\n`);
-                        }
-                      }}
-                      className="px-2 py-0.5 bg-neutral-800 hover:bg-neutral-700 text-white rounded text-[10px] font-medium transition cursor-pointer"
-                    >
-                      + Add Internal
-                    </button>
-                    <select
-                      onChange={(e) => {
-                        if (e.target.value) {
-                          const [url, title] = e.target.value.split("|");
-                          setContent((prev) => prev + ` [${title}](${url}) `);
-                          e.target.value = "";
-                        }
-                      }}
-                      className="bg-black text-[10px] text-neutral-300 border border-neutral-800 rounded px-1.5 py-0.5 focus:outline-none"
-                    >
-                      <option value="">Quick Presets...</option>
-                      <option value="/menu|Fine Dining Menu">Menu (/menu)</option>
-                      <option value="/reservations|Reserve a Table">Reservations (/reservations)</option>
-                      <option value="/about|Our Hillside Heritage">About (/about)</option>
-                      <option value="/wine-cellar|Grand Wine Cellar">Wine Cellar (/wine-cellar)</option>
-                      <option value="/locations|Global Flagships">Locations (/locations)</option>
-                      <option value="/botanicals|Artisan Spices">Botanicals (/botanicals)</option>
-                      <option value="/contact|Contact Concierge">Contact (/contact)</option>
-                    </select>
-                  </div>
 
-                  {/* Quick External Linking Helper */}
-                  <div className="flex items-center gap-1 bg-neutral-900 border border-neutral-700/80 rounded-lg p-1">
-                    <span className="text-[10px] text-sky-400 font-semibold px-1.5 flex items-center gap-1">
-                      <ExternalLink className="w-3 h-3" /> External Link:
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const anchor = prompt("External Link Text (e.g. Michelin Guide or Forbes):", "Michelin Guide Review");
-                        const url = prompt("External Target URL (must start with https://):", "https://");
-                        if (anchor && url) {
-                          setContent((prev) => prev + `\n[${anchor}](${url}){:target="_blank" rel="noopener noreferrer"}\n`);
-                        }
-                      }}
-                      className="px-2 py-0.5 bg-sky-950/60 hover:bg-sky-900/80 text-sky-300 border border-sky-800/50 rounded text-[10px] font-medium transition cursor-pointer"
-                    >
-                      + Add External
-                    </button>
-                  </div>
+                {/* Automation Action Badges */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={formatHeadingsAutomatically}
+                    className="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition cursor-pointer"
+                    title="Auto-detect plain text headings and convert into H2/H3 tags"
+                  >
+                    <Wand2 className="w-3 h-3" />
+                    <span>Auto-Format Headings (H2/H3)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={applyAutomaticLinkOptimization}
+                    className="px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition cursor-pointer"
+                    title="Auto-link keywords like menu, reservation, locations, and Michelin guide"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    <span>Auto-Pick Internal &amp; External Links</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowInnerImageModal(true)}
+                    className="px-2.5 py-1 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition cursor-pointer"
+                    title="Insert content inner image with custom alt text"
+                  >
+                    <ImageIcon className="w-3 h-3" />
+                    <span>+ Insert Inner Image</span>
+                  </button>
                 </div>
               </div>
+
+              {/* Quick Markdown Formatting Toolbar */}
+              <div className="flex flex-wrap items-center gap-1.5 p-2 bg-neutral-900 border border-neutral-800 rounded-xl text-xs">
+                <button
+                  type="button"
+                  onClick={() => setContent(prev => prev + '\n\n## Main Heading (H2)\n')}
+                  className="px-2.5 py-1 bg-black hover:bg-neutral-800 text-neutral-300 rounded font-semibold text-[11px] border border-neutral-800 flex items-center gap-1 cursor-pointer"
+                >
+                  <Heading2 className="w-3 h-3 text-amber-400" /> H2 Heading
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setContent(prev => prev + '\n\n### Sub-Section (H3)\n')}
+                  className="px-2.5 py-1 bg-black hover:bg-neutral-800 text-neutral-300 rounded font-semibold text-[11px] border border-neutral-800 flex items-center gap-1 cursor-pointer"
+                >
+                  <Heading3 className="w-3 h-3 text-emerald-400" /> H3 Heading
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setContent(prev => prev + ' **Bold Text** ')}
+                  className="px-2 py-1 bg-black hover:bg-neutral-800 text-neutral-300 rounded text-[11px] border border-neutral-800 cursor-pointer"
+                >
+                  <Bold className="w-3 h-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setContent(prev => prev + ' *Italic Text* ')}
+                  className="px-2 py-1 bg-black hover:bg-neutral-800 text-neutral-300 rounded text-[11px] border border-neutral-800 cursor-pointer"
+                >
+                  <Italic className="w-3 h-3" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setContent(prev => prev + '\n- Bullet point 1\n- Bullet point 2\n')}
+                  className="px-2 py-1 bg-black hover:bg-neutral-800 text-neutral-300 rounded text-[11px] border border-neutral-800 cursor-pointer"
+                >
+                  <List className="w-3 h-3" />
+                </button>
+
+                <div className="h-4 w-px bg-neutral-800 mx-1" />
+
+                {/* Quick Internal Linking Helper */}
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const anchor = prompt("Internal Link Text (e.g. Signature Charcoal BBQ):", "Our Signature Menu");
+                      const target = prompt("Target URL path (e.g. /menu, /reservations, /about, /wine-cellar):", "/menu");
+                      if (anchor && target) {
+                        setContent((prev) => prev + ` [${anchor}](${target}) `);
+                      }
+                    }}
+                    className="px-2 py-1 bg-amber-950/40 hover:bg-amber-900/60 text-amber-300 border border-amber-800/40 rounded text-[10px] font-medium transition cursor-pointer flex items-center gap-1"
+                  >
+                    <Link2 className="w-3 h-3" /> + Custom Internal Link
+                  </button>
+
+                  <select
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        const [url, title] = e.target.value.split("|");
+                        setContent((prev) => prev + ` [${title}](${url}) `);
+                        e.target.value = "";
+                      }
+                    }}
+                    className="bg-black text-[10px] text-neutral-300 border border-neutral-800 rounded px-2 py-1 focus:outline-none"
+                  >
+                    <option value="">Quick Presets...</option>
+                    <option value="/menu|Fine Dining Menu">Menu (/menu)</option>
+                    <option value="/contact|Reserve a Table">Reservations (/contact)</option>
+                    <option value="/about|Our Hillside Heritage">About (/about)</option>
+                    <option value="/wine-cellar|Grand Wine Cellar">Wine Cellar (/wine-cellar)</option>
+                    <option value="/locations|Global Flagships">Locations (/locations)</option>
+                    <option value="/botanicals|Artisan Spices">Botanicals (/botanicals)</option>
+                  </select>
+                </div>
+
+                <div className="h-4 w-px bg-neutral-800 mx-1" />
+
+                {/* Quick External Linking Helper */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const anchor = prompt("External Link Text (e.g. Michelin Guide or Forbes):", "Michelin Guide Review");
+                    const url = prompt("External Target URL (must start with https://):", "https://");
+                    if (anchor && url) {
+                      setContent((prev) => prev + ` [${anchor}](${url}) `);
+                    }
+                  }}
+                  className="px-2 py-1 bg-sky-950/60 hover:bg-sky-900/80 text-sky-300 border border-sky-800/50 rounded text-[10px] font-medium transition cursor-pointer flex items-center gap-1"
+                >
+                  <ExternalLink className="w-3 h-3" /> + External Link
+                </button>
+              </div>
+
               <textarea
-                rows={12}
+                rows={14}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder="# Article Heading&#10;&#10;Write your deep-dive article here..."
+                placeholder="# Article Heading&#10;&#10;Write or paste your article here. Use the 'Auto-Format Headings' button above to automatically convert pasted text into proper H2 & H3 structure!"
                 className="w-full p-4 bg-black border border-neutral-800 rounded-xl text-xs text-neutral-200 font-mono focus:outline-none focus:border-amber-400 leading-relaxed"
               />
             </div>
@@ -626,7 +837,7 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
                   <div className="flex items-center gap-3 text-[11px] text-neutral-500">
                     <span>By {post.author.name}</span>
                     <span>&bull;</span>
-                    <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
+                    <span>{new Date(post.publishedAt || '').toLocaleDateString()}</span>
                     <span>&bull;</span>
                     <span>{post.readTimeMinutes} min read</span>
                   </div>
@@ -671,6 +882,122 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
           </div>
         )}
       </div>
+
+      {/* Inner Content Image Dialog Modal */}
+      {showInnerImageModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#141414] border border-neutral-700 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl animate-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
+              <div className="flex items-center gap-2 text-white font-bold text-sm">
+                <ImageIcon className="w-4 h-4 text-sky-400" />
+                <span>Insert Inner Image with SEO ALT Text</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowInnerImageModal(false);
+                  setInnerImageUrl('');
+                  setInnerImageAlt('');
+                  setInnerImageCaption('');
+                }}
+                className="text-neutral-400 hover:text-white p-1 rounded-lg hover:bg-neutral-800 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-semibold text-neutral-300 mb-1">
+                  Image Source URL (Web Link)
+                </label>
+                <input
+                  type="url"
+                  value={innerImageUrl}
+                  onChange={(e) => setInnerImageUrl(e.target.value)}
+                  placeholder="https://images.unsplash.com/... or https://..."
+                  className="w-full px-3 py-2 bg-black border border-neutral-800 rounded-xl text-xs text-white focus:outline-none focus:border-sky-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-neutral-300 mb-1 flex items-center justify-between">
+                  <span>Image ALT Text (Critical for Google SEO)</span>
+                  <span className="text-[10px] text-emerald-400 font-mono">Descriptive</span>
+                </label>
+                <input
+                  type="text"
+                  value={innerImageAlt}
+                  onChange={(e) => setInnerImageAlt(e.target.value)}
+                  placeholder="e.g. Cozy interior dining table with candles at Margalla Hills"
+                  className="w-full px-3 py-2 bg-black border border-neutral-800 rounded-xl text-xs text-white focus:outline-none focus:border-sky-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-neutral-300 mb-1">
+                  Optional Caption / Title
+                </label>
+                <input
+                  type="text"
+                  value={innerImageCaption}
+                  onChange={(e) => setInnerImageCaption(e.target.value)}
+                  placeholder="e.g. Signature hillside seating arrangement"
+                  className="w-full px-3 py-2 bg-black border border-neutral-800 rounded-xl text-xs text-white focus:outline-none focus:border-sky-400"
+                />
+              </div>
+
+              {innerImageUrl && (
+                <div className="p-2 bg-black rounded-xl border border-neutral-800 flex items-center gap-3">
+                  <img
+                    src={innerImageUrl}
+                    alt={innerImageAlt || 'Preview'}
+                    className="w-16 h-12 rounded-lg object-cover border border-neutral-700"
+                    onError={(e) => { (e.target as any).style.display = 'none'; }}
+                  />
+                  <div className="text-[11px] text-neutral-400 truncate">
+                    <span className="text-white font-medium block truncate">{innerImageAlt || 'No alt text provided'}</span>
+                    <span className="text-neutral-500 font-mono text-[10px]">Ready to insert</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-800">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowInnerImageModal(false);
+                  setInnerImageUrl('');
+                  setInnerImageAlt('');
+                  setInnerImageCaption('');
+                }}
+                className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 rounded-xl text-xs font-medium cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={!innerImageUrl.trim()}
+                onClick={() => {
+                  const alt = innerImageAlt.trim() || title || 'Margalla Hills culinary post';
+                  const captionMarkdown = innerImageCaption.trim() ? `\n*${innerImageCaption.trim()}*\n` : '';
+                  const markdownImage = `\n\n![${alt}](${innerImageUrl.trim()})${captionMarkdown}\n\n`;
+                  setContent((prev) => prev + markdownImage);
+                  setShowInnerImageModal(false);
+                  setInnerImageUrl('');
+                  setInnerImageAlt('');
+                  setInnerImageCaption('');
+                  if (showToast) showToast('Inner image inserted into article body!');
+                }}
+                className="px-5 py-2 bg-sky-500 hover:bg-sky-400 disabled:opacity-50 text-black rounded-xl text-xs font-bold cursor-pointer transition shadow"
+              >
+                Insert into Article
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
