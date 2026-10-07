@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { SEOHead } from '../components/SEOHead';
 import { BlogPost } from '../types';
 import { api } from '../lib/api';
@@ -28,7 +29,7 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
     }
   }, [slug, initialPosts]);
 
-  // Aggressive formatting logic to handle WhatsApp/Word pasted text merging issue
+  // Smart formatted content fallback: if user pasted plain text without markdown hashes, detect headings automatically
   const formattedContent = useMemo(() => {
     if (!post || !post.content) return '';
     const raw = post.content;
@@ -39,6 +40,7 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
       let line = lines[i];
       const trimmedLine = line.trim();
 
+      // Skip truly empty lines but use them to push a break
       if (!trimmedLine) {
         if (result.length > 0 && result[result.length - 1] !== '') {
           result.push('');
@@ -46,6 +48,7 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
         continue;
       }
 
+      // Normalize bullet characters like • to standard markdown bullet -
       if (trimmedLine.startsWith('•') || trimmedLine.startsWith('●') || trimmedLine.startsWith('▪')) {
         line = '- ' + trimmedLine.substring(1).trim();
       }
@@ -54,35 +57,49 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
       const isList = /^[\-\*\+]\s+/.test(trimmedLine) || /^\d+[\.\)]\s+/.test(trimmedLine);
       const isTable = trimmedLine.startsWith('|');
 
+      // Auto-heading detection for plain text (preserves old logic)
       if (!isHeading && !isList && !isTable) {
+        // Numbered items like 1. Tuscany Courtyard or 1) Tuscany Courtyard
         if (/^\d+[\.\)]\s+/.test(trimmedLine) && trimmedLine.length < 80 && !trimmedLine.endsWith('.')) {
           result.push(`## ${trimmedLine}`);
-          result.push('');
+          result.push(''); // Force space after auto-heading
           continue;
         }
+
         const subHeadingKeywords = ['pros:', 'cons:', 'what to eat:', 'what to check:', 'best for:', 'atmosphere:', 'verdict:', 'highlights:', 'conclusion:'];
         if (subHeadingKeywords.some(k => trimmedLine.toLowerCase().startsWith(k))) {
           result.push(`### ${trimmedLine}`);
           result.push('');
           continue;
         }
-        if (trimmedLine.length > 3 && trimmedLine.length < 65 && !trimmedLine.endsWith('.') && !trimmedLine.endsWith(',') && (i === 0 || lines[i - 1].trim() === '')) {
+
+        if (
+          trimmedLine.length > 3 &&
+          trimmedLine.length < 65 &&
+          !trimmedLine.endsWith('.') &&
+          !trimmedLine.endsWith(',') &&
+          (i === 0 || lines[i - 1].trim() === '')
+        ) {
           result.push(`## ${trimmedLine}`);
           result.push('');
           continue;
         }
       }
 
+      // If it's a structural element, just push it
       if (isHeading || isList || isTable) {
         result.push(line);
       } else {
+        // It's a plain paragraph line. 
+        // Force a double newline after it to prevent merging with the next line in Markdown
         result.push(line);
-        result.push(''); // Force paragraph space
+        result.push(''); 
       }
     }
     return result.join('\n');
   }, [post?.content]);
 
+  // Table of Contents generator from Markdown H2 and H3 - ALWAYS before any conditional return!
   const tableOfContents = useMemo(() => {
     if (!formattedContent) return [];
     const lines = formattedContent.split("\n");
@@ -104,73 +121,315 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
       <div className="bg-[#0A0A0A] text-slate-300 min-h-screen flex items-center justify-center">
         <div className="max-w-4xl mx-auto px-4 py-20 text-center">
           <h1 className="font-serif text-3xl font-bold text-white">Article Not Found</h1>
-          <button onClick={() => navigate('/blog')} className="mt-6 px-5 py-2.5 bg-emerald-500 text-black font-bold rounded-xl text-xs cursor-pointer">Return to Blog</button>
+          <p className="text-sm text-slate-400 mt-2">The requested SEO publication does not exist or has been relocated.</p>
+          <button
+            onClick={() => navigate('/blog')}
+            className="mt-6 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black font-bold rounded-xl text-xs cursor-pointer"
+          >
+            Return to Blog
+          </button>
         </div>
       </div>
     );
   }
 
   const safeTags = post.tags || [];
-  const relatedPosts = posts.filter(p => p.id !== post.id && (p.category === post.category)).slice(0, 3);
+
+  const postSEO = post.seo || {
+    seoTitle: `${post.title} | Margalla Hills SEO Article`,
+    metaDescription: post.excerpt,
+    slug: post.slug,
+    focusKeyword: safeTags[0] || 'margalla hills dining',
+    secondaryKeywords: safeTags,
+    canonicalUrl: `/blog/${post.slug}`,
+    robotsIndex: true,
+    robotsFollow: true,
+    ogTitle: post.title,
+    ogDescription: post.excerpt,
+    ogImage: post.featuredImage,
+    schemaType: 'Article' as const,
+    searchIntent: 'Informational' as const
+  };
+
+  const schemaArticle = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.excerpt,
+    image: post.featuredImage,
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt || post.publishedAt,
+    author: {
+      '@type': 'Person',
+      name: 'Muhammad Abid',
+      jobTitle: 'Travel Writer & Storyteller'
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Margalla Hills Luxury Dining',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80'
+      }
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `/blog/${post.slug}`
+    }
+  };
+
+  const relatedPosts = posts
+    .filter(p => p.id !== post.id && (p.category === post.category || (p.tags && p.tags.some(t => safeTags.includes(t)))))
+    .slice(0, 3);
+
+
 
   return (
     <div className="bg-[#0A0A0A] text-slate-300 min-h-screen py-10">
-      <SEOHead seo={post.seo || { seoTitle: post.title, metaDescription: post.excerpt, slug: post.slug }} contentForAudit={post.content} />
+      <SEOHead
+        seo={postSEO}
+        schemaData={schemaArticle}
+        contentForAudit={post.content}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav className="mb-6">
+        {/* Breadcrumb Navigation */}
+        <nav aria-label="Breadcrumb" className="mb-6">
           <ol className="flex items-center gap-2 text-xs text-slate-400 font-mono">
-            <li><button onClick={() => navigate('/')} className="hover:text-emerald-400">Home</button></li>
-            <li><ChevronRight className="w-3 h-3" /></li>
-            <li><button onClick={() => navigate('/blog')} className="hover:text-emerald-400">Blog</button></li>
-            <li><ChevronRight className="w-3 h-3" /></li>
+            <li>
+              <button onClick={() => navigate('/')} className="hover:text-emerald-400 cursor-pointer">Home</button>
+            </li>
+            <li><ChevronRight className="w-3 h-3 text-slate-600" /></li>
+            <li>
+              <button onClick={() => navigate('/blog')} className="hover:text-emerald-400 cursor-pointer">Blog</button>
+            </li>
+            <li><ChevronRight className="w-3 h-3 text-slate-600" /></li>
+            <li>
+              <button onClick={() => navigate('/blog')} className="capitalize hover:text-emerald-400 cursor-pointer">{post.category}</button>
+            </li>
+            <li><ChevronRight className="w-3 h-3 text-slate-600" /></li>
             <li className="text-white font-semibold truncate max-w-xs">{post.title}</li>
           </ol>
         </nav>
 
+        {/* Back Button */}
+        <div className="mb-8">
+          <button
+            onClick={() => navigate('/blog')}
+            className="inline-flex items-center gap-2 text-xs font-semibold text-slate-300 hover:text-emerald-400 transition cursor-pointer"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to All Articles</span>
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          {/* Main Article Content */}
           <main className="lg:col-span-8 space-y-8">
-            <article className="bg-[#121212] rounded-3xl border border-slate-800 p-6 sm:p-10 lg:p-12 shadow-2xl">
+            <article className="bg-[#121212] rounded-3xl border border-slate-800 shadow-sm p-6 sm:p-10 lg:p-12">
+              {/* Category & Date Metadata */}
               <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 font-mono mb-4">
-                <span className="px-3 py-1 bg-black/80 border border-white/10 text-emerald-400 rounded-md uppercase">{post.category}</span>
-                <span>{post.publishedAt.split('T')[0]}</span>
+                <span className="px-3 py-1 bg-black/80 border border-white/10 text-emerald-400 rounded-md font-semibold uppercase tracking-wider">
+                  {post.category}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Calendar className="w-3.5 h-3.5 text-emerald-400" /> Published: {post.publishedAt.split('T')[0]}
+                </span>
                 <span>&bull;</span>
-                <span>{post.readTimeMinutes} min read</span>
+                <span className="flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5 text-emerald-400" /> {post.readTimeMinutes} min read
+                </span>
               </div>
 
-              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">{post.title}</h1>
-              <p className="text-base text-slate-400 mb-8 border-b border-slate-800 pb-6">{post.excerpt}</p>
+              {/* Title & Excerpt */}
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
+                {post.title}
+              </h1>
 
-              <div className="my-8 rounded-2xl overflow-hidden border border-slate-800">
-                <img src={post.featuredImage} alt={post.imageAltText || post.title} className="w-full h-80 sm:h-96 object-cover" />
+              <p className="text-base text-slate-400 mt-4 leading-relaxed font-sans pb-6 border-b border-slate-800">
+                {post.excerpt}
+              </p>
+
+              {/* Featured Image */}
+              <div className="my-8 rounded-2xl overflow-hidden shadow-sm border border-slate-800">
+                <img
+                  src={post.featuredImage}
+                  alt={post.imageAltText || post.title}
+                  className="w-full h-80 sm:h-96 object-cover"
+                />
+                {post.imageAltText && (
+                  <div className="px-4 py-2 bg-[#0A0A0A] text-[11px] text-slate-400 font-mono border-t border-slate-800 flex items-center justify-between">
+                    <span>ALT Text: {post.imageAltText}</span>
+                    <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" /> SEO Optimized
+                    </span>
+                  </div>
+                )}
               </div>
 
-              <div className="prose prose-invert max-w-none">
+              {/* Markdown Content Body with Smart Internal / External Link Routing & Inner Image Styling */}
+              <div className="prose prose-invert max-w-none prose-headings:font-serif prose-headings:font-bold prose-headings:text-white prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-slate-800/80 prose-h2:pb-2 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:text-slate-300 prose-p:leading-relaxed prose-p:text-sm sm:prose-p:text-base prose-li:text-sm prose-li:text-slate-300 prose-strong:text-white">
                 <Markdown
+                  remarkPlugins={[remarkGfm]}
                   components={{
-                    p: ({ children }) => <p className="mb-6 leading-relaxed text-slate-300 text-base sm:text-lg">{children}</p>,
-                    ul: ({ children }) => <ul className="list-disc pl-6 mb-6 space-y-3 text-slate-300">{children}</ul>,
-                    ol: ({ children }) => <ol className="list-decimal pl-6 mb-6 space-y-3 text-slate-300">{children}</ol>,
-                    li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-                    h2: ({ children }) => {
-                      const id = String(children).toLowerCase().replace(/[^\w]+/g, '-');
-                      return <h2 id={id} className="font-serif text-2xl sm:text-3xl font-bold text-white mt-12 mb-6 pb-2 border-b border-slate-800">{children}</h2>;
+                    p: ({ node, children, ...props }) => (
+                      <p className="mb-4 leading-relaxed text-slate-300 text-sm sm:text-base font-sans" {...props}>
+                        {children}
+                      </p>
+                    ),
+                    ul: ({ node, children, ...props }) => (
+                      <ul className="list-disc pl-6 my-4 space-y-2 text-slate-300 font-sans" {...props}>
+                        {children}
+                      </ul>
+                    ),
+                    ol: ({ node, children, ...props }) => (
+                      <ol className="list-decimal pl-6 my-4 space-y-2 text-slate-300 font-sans" {...props}>
+                        {children}
+                      </ol>
+                    ),
+                    li: ({ node, children, ...props }) => (
+                      <li className="leading-relaxed text-sm sm:text-base text-slate-300" {...props}>
+                        {children}
+                      </li>
+                    ),
+                    table: ({ node, children, ...props }) => (
+                      <div className="my-6 overflow-x-auto rounded-2xl border border-slate-800 bg-[#121212] shadow-md">
+                        <table className="w-full text-left border-collapse text-xs sm:text-sm text-slate-300" {...props}>
+                          {children}
+                        </table>
+                      </div>
+                    ),
+                    thead: ({ node, children, ...props }) => (
+                      <thead className="bg-[#181818] text-white border-b border-slate-800 font-mono text-xs uppercase tracking-wider" {...props}>
+                        {children}
+                      </thead>
+                    ),
+                    tbody: ({ node, children, ...props }) => (
+                      <tbody className="divide-y divide-slate-800/60 bg-[#0A0A0A]" {...props}>
+                        {children}
+                      </tbody>
+                    ),
+                    tr: ({ node, children, ...props }) => (
+                      <tr className="hover:bg-slate-800/30 transition" {...props}>
+                        {children}
+                      </tr>
+                    ),
+                    th: ({ node, children, ...props }) => (
+                      <th className="p-3.5 font-bold text-amber-400" {...props}>
+                        {children}
+                      </th>
+                    ),
+                    td: ({ node, children, ...props }) => (
+                      <td className="p-3.5 text-slate-300" {...props}>
+                        {children}
+                      </td>
+                    ),
+                    blockquote: ({ node, children, ...props }) => (
+                      <blockquote className="border-l-4 border-amber-400 pl-4 my-6 italic text-slate-300 bg-[#161616] py-3 pr-4 rounded-r-xl" {...props}>
+                        {children}
+                      </blockquote>
+                    ),
+                    h2: ({ node, children, ...props }) => {
+                      const text = String(children || '');
+                      const id = text.toLowerCase().replace(/[^\w]+/g, '-');
+                      return (
+                        <h2 id={id} className="font-serif text-2xl font-bold text-white mt-10 mb-4 pb-2 border-b border-slate-800 scroll-mt-24" {...props}>
+                          {children}
+                        </h2>
+                      );
                     },
-                    h3: ({ children }) => <h3 className="font-serif text-xl sm:text-2xl font-bold text-amber-400 mt-8 mb-4">{children}</h3>,
-                    blockquote: ({ children }) => <blockquote className="border-l-4 border-amber-400 pl-6 my-8 italic text-slate-200 bg-amber-400/5 py-4 rounded-r-xl">{children}</blockquote>,
+                    h3: ({ node, children, ...props }) => {
+                      const text = String(children || '');
+                      const id = text.toLowerCase().replace(/[^\w]+/g, '-');
+                      return (
+                        <h3 id={id} className="font-serif text-xl font-bold text-amber-400 mt-8 mb-3 scroll-mt-24" {...props}>
+                          {children}
+                        </h3>
+                      );
+                    },
+                    img: ({ node, src, alt, ...props }) => {
+                      return (
+                        <figure className="my-8 rounded-2xl overflow-hidden border border-slate-800 bg-[#0c0c0c] shadow-lg">
+                          <img
+                            src={src}
+                            alt={alt || 'Margalla Hills culinary content'}
+                            className="w-full h-auto max-h-[460px] object-cover rounded-t-2xl"
+                            loading="lazy"
+                            {...props}
+                          />
+                          {alt && (
+                            <figcaption className="px-4 py-2 bg-[#0A0A0A] text-xs text-slate-400 border-t border-slate-850 flex items-center justify-between font-sans">
+                              <span>{alt}</span>
+                              <span className="text-[10px] text-emerald-400 font-mono font-medium flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3" /> Image ALT Verified
+                              </span>
+                            </figcaption>
+                          )}
+                        </figure>
+                      );
+                    },
+                    a: ({ node, href, children, ...props }) => {
+                      const isExternal = href?.startsWith("http://") || href?.startsWith("https://");
+                      if (isExternal) {
+                        return (
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-0.5 text-sky-400 hover:text-sky-300 underline font-medium"
+                            {...props}
+                          >
+                            <span>{children}</span>
+                            <span className="text-[10px] opacity-75">↗</span>
+                          </a>
+                        );
+                      }
+                      return (
+                        <a
+                          href={href}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (href) navigate(href);
+                          }}
+                          className="text-amber-400 hover:text-amber-300 underline font-medium cursor-pointer"
+                          {...props}
+                        >
+                          {children}
+                        </a>
+                      );
+                    },
                   }}
                 >
                   {formattedContent}
                 </Markdown>
               </div>
 
+              {/* Article Tags */}
+              {safeTags.length > 0 && (
+                <div className="mt-12 pt-6 border-t border-slate-800 flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-semibold text-slate-400 uppercase font-mono mr-2">Target Keywords:</span>
+                  {safeTags.map((tag, i) => (
+                    <span key={i} className="text-xs bg-[#0A0A0A] text-slate-300 px-3 py-1 rounded-lg border border-slate-800 flex items-center gap-1">
+                      <Tag className="w-3 h-3 text-emerald-400" /> {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+
               {/* Author Box - Professional Author Muhammad Abid */}
-              <div className="mt-16 p-8 bg-black/40 rounded-3xl border border-slate-800 flex flex-col sm:flex-row items-center gap-6 shadow-xl">
-                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&q=80" alt="Muhammad Abid" className="w-20 h-20 rounded-full object-cover border-2 border-amber-500/30" />
+              <div className="mt-16 p-8 bg-black/40 rounded-3xl border border-slate-800 flex flex-col sm:flex-row items-center gap-6">
+                <img
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&q=80"
+                  alt="Muhammad Abid"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-amber-500/30"
+                />
                 <div className="text-center sm:text-left">
-                  <h4 className="text-xl font-bold text-white mb-1">Muhammad Abid</h4>
+                  <h4 className="text-xl font-bold text-white mb-1 flex items-center justify-center sm:justify-start gap-2">
+                    <span>Muhammad Abid</span>
+                    <span className="text-[10px] bg-amber-400 text-black px-2 py-0.5 rounded-full font-bold">Author</span>
+                  </h4>
                   <p className="text-xs text-amber-400 font-mono uppercase tracking-widest mb-3">Travel Writer & Storyteller</p>
-                  <p className="text-sm text-slate-400 leading-relaxed">
+                  <p className="text-sm text-slate-400 leading-relaxed font-sans">
                     Muhammad Abid is a travel writer and storyteller passionate about Islamabad, nature, and exploring the hidden gems of Pakistan. He writes practical travel guides, local insights, and inspiring stories about the Margalla Hills, outdoor adventures, and places worth discovering around Islamabad. Through his writing, Muhammad aims to help travelers discover Pakistan’s natural beauty and make the most of their journeys.
                   </p>
                 </div>
@@ -178,30 +437,71 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
             </article>
           </main>
 
+          {/* Sidebar */}
           <aside className="lg:col-span-4 space-y-8">
+            {/* Table of Contents Box */}
             {tableOfContents.length > 0 && (
-              <div className="bg-[#121212] p-6 rounded-2xl border border-slate-800 sticky top-24 shadow-xl">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-4 flex items-center gap-2"><Sparkles className="w-3.5 h-3.5" /> Table of Contents</h3>
-                <nav className="space-y-3">
+              <div className="bg-[#121212] p-6 rounded-2xl border border-slate-800 shadow-sm sticky top-24">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-white font-mono mb-4 flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                  Table of Contents
+                </h3>
+                <nav className="space-y-2 text-xs">
                   {tableOfContents.map((item, idx) => (
-                    <button key={idx} onClick={() => document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth' })} className={`block w-full text-left text-xs text-slate-400 hover:text-white transition ${item.level === 3 ? 'pl-4 opacity-70' : 'font-medium'}`}>
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        const el = document.getElementById(item.id);
+                        if (el) {
+                          el.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                      className={`block w-full text-left text-slate-400 hover:text-amber-400 font-medium transition cursor-pointer ${
+                        item.level === 3 ? 'pl-4 text-slate-500 hover:text-amber-300' : ''
+                      }`}
+                    >
                       {item.level === 2 ? '• ' : '- '} {item.text}
                     </button>
                   ))}
                 </nav>
+
+                <div className="mt-6 pt-4 border-t border-slate-800">
+                  <button
+                    onClick={() => navigate('/contact')}
+                    className="w-full py-2.5 px-4 bg-amber-500 hover:bg-amber-400 text-black rounded-xl text-xs font-serif font-bold flex items-center justify-center gap-2 transition cursor-pointer shadow"
+                  >
+                    <span>Reserve Dining Experience</span>
+                  </button>
+                </div>
               </div>
             )}
-            
+
+            {/* Related Publications */}
             {relatedPosts.length > 0 && (
-              <div className="bg-[#121212] p-6 rounded-2xl border border-slate-800">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-white mb-4">Related Publications</h3>
+              <div className="bg-[#121212] p-6 rounded-2xl border border-slate-800 shadow-sm">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-white font-mono mb-4">
+                  Related Publications
+                </h3>
                 <div className="space-y-4">
                   {relatedPosts.map((rPost) => (
-                    <div key={rPost.id} onClick={() => navigate(`/blog/${rPost.slug}`)} className="group cursor-pointer flex gap-3 items-start">
-                      <img src={rPost.featuredImage} alt={rPost.title} className="w-16 h-16 rounded-xl object-cover shrink-0 border border-slate-800" />
+                    <div
+                      key={rPost.id}
+                      onClick={() => navigate(`/blog/${rPost.slug}`)}
+                      className="group cursor-pointer flex gap-3 items-start"
+                    >
+                      <img
+                        src={rPost.featuredImage}
+                        alt={rPost.title}
+                        className="w-16 h-16 rounded-xl object-cover shrink-0 border border-slate-800 group-hover:opacity-90"
+                      />
                       <div>
-                        <h4 className="font-serif text-xs font-bold text-white group-hover:text-emerald-400 transition line-clamp-2">{rPost.title}</h4>
-                        <span className="text-[10px] text-slate-400 block mt-1">{rPost.publishedAt.split('T')[0]}</span>
+                        <h4 className="font-serif text-xs font-bold text-white group-hover:text-emerald-400 transition line-clamp-2">
+                          {rPost.title}
+                        </h4>
+                        <span className="text-[10px] text-slate-400 font-mono block mt-1">
+                          {rPost.publishedAt.split('T')[0]} &bull; {rPost.readTimeMinutes}m read
+                        </span>
                       </div>
                     </div>
                   ))}
