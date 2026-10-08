@@ -1,4 +1,4 @@
-export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'EDITOR';
+export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'EDITOR' | 'SEO_SPECIALIST';
 
 export interface User {
   id: string;
@@ -83,6 +83,9 @@ export interface MenuCategory {
 export interface BlogPost {
   id: string;
   title: string;
+  h1_title?: string;
+  seo_title?: string;
+  meta_desc?: string;
   slug: string;
   excerpt: string;
   content: string;
