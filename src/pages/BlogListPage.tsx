@@ -29,10 +29,11 @@ export function BlogListPage({ navigate, posts: initialPosts, categories: initia
     return posts.filter((post) => {
       if (post.status !== 'published') return false;
       const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
+      const tags = post.tags || [];
       const matchesSearch =
         post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
+        (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
       return matchesCategory && matchesSearch;
     });
   }, [posts, selectedCategory, searchQuery]);
@@ -179,15 +180,15 @@ All articles include live on-page metadata auditing and structured JSON-LD schem
                     </div>
 
                     <h2 className="font-serif text-lg font-bold text-white group-hover:text-emerald-400 transition leading-snug">
-                      {post.title}
+                      {post.h1_title || post.title}
                     </h2>
 
                     <p className="text-xs text-slate-400 mt-2.5 line-clamp-3 leading-relaxed">
-                      {post.excerpt}
+                      {post.meta_desc || post.excerpt}
                     </p>
 
                     <div className="mt-4 flex flex-wrap gap-1">
-                      {post.tags.slice(0, 3).map((tag, i) => (
+                      {(post.tags || []).slice(0, 3).map((tag, i) => (
                         <span key={i} className="text-[10px] bg-[#0A0A0A] text-slate-400 border border-slate-800 px-2 py-0.5 rounded-md flex items-center gap-1">
                           <Tag className="w-2.5 h-2.5 text-emerald-400" /> {tag}
                         </span>
@@ -199,11 +200,11 @@ All articles include live on-page metadata auditing and structured JSON-LD schem
                 <div className="p-6 pt-0 border-t border-slate-800/80 mt-4 flex items-center justify-between text-xs text-slate-400">
                   <div className="flex items-center gap-2">
                     <img
-                      src={post.author.avatar}
-                      alt={post.author.name}
+                      src={post.author?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&q=80'}
+                      alt={post.author?.name || 'Muhammad Abid'}
                       className="w-6 h-6 rounded-full object-cover border border-slate-700"
                     />
-                    <span className="font-medium text-slate-300">{post.author.name}</span>
+                    <span className="font-medium text-slate-300">{post.author?.name || 'Muhammad Abid'}</span>
                   </div>
                   <span className="text-emerald-400 font-semibold flex items-center gap-0.5 group-hover:translate-x-1 transition-transform">
                     <span>Read Article</span>
