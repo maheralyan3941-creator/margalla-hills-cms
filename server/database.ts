@@ -888,6 +888,9 @@ class DatabaseManager {
     const now = new Date().toISOString();
     const newPost: BlogPost = {
       ...post,
+      h1_title: post.h1_title || post.title,
+      seo_title: post.seo_title || post.title,
+      meta_desc: post.meta_desc || post.excerpt,
       id: `post-${Date.now()}`,
       publishedAt: post.publishedAt || now,
       updatedAt: now
@@ -900,9 +903,13 @@ class DatabaseManager {
   public updateBlogPost(id: string, updates: Partial<BlogPost>) {
     const index = this.data.blogPosts.findIndex(p => p.id === id);
     if (index === -1) return null;
+    const existing = this.data.blogPosts[index];
     this.data.blogPosts[index] = {
-      ...this.data.blogPosts[index],
+      ...existing,
       ...updates,
+      h1_title: updates.h1_title !== undefined ? updates.h1_title : (existing.h1_title || existing.title),
+      seo_title: updates.seo_title !== undefined ? updates.seo_title : (existing.seo_title || existing.title),
+      meta_desc: updates.meta_desc !== undefined ? updates.meta_desc : (existing.meta_desc || existing.excerpt),
       updatedAt: new Date().toISOString()
     };
     this.save();
