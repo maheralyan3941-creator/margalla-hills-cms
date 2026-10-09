@@ -28,7 +28,10 @@ export function BlogListPage({ navigate, posts: initialPosts, categories: initia
   const filteredPosts = useMemo(() => {
     return posts.filter((post) => {
       if (post.status !== 'published') return false;
-      const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
+      const matchesCategory =
+        selectedCategory === 'all' ||
+        post.category === selectedCategory ||
+        (post.category && post.category.toLowerCase().replace(/[^a-z0-9]+/g, '-') === selectedCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
       const tags = post.tags || [];
       const matchesSearch =
         post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -39,16 +42,16 @@ export function BlogListPage({ navigate, posts: initialPosts, categories: initia
   }, [posts, selectedCategory, searchQuery]);
 
   const blogSEO = {
-    seoTitle: 'SEO & Culinary Knowledge Base | Saffron & Sage Lab',
-    metaDescription: 'In-depth guides on Restaurant SEO, local pack ranking, schema optimization, and artisanal gastronomy insights.',
+    seoTitle: 'Margalla Hills Blog & Travel Guides | Islamabad Stories',
+    metaDescription: 'Explore Margalla Hills hiking trails, authentic food guides, places to visit, nature & wildlife, and travel tips for Islamabad.',
     slug: 'blog',
-    focusKeyword: 'restaurant seo guide',
-    secondaryKeywords: ['local seo hospitality', 'structured data restaurant', 'culinary content marketing'],
+    focusKeyword: 'margalla hills blog travel guides',
+    secondaryKeywords: ['hiking trails islamabad', 'places to visit islamabad', 'best restaurants food islamabad'],
     canonicalUrl: '/blog',
     robotsIndex: true,
     robotsFollow: true,
-    ogTitle: 'SEO & Culinary Knowledge Base - Saffron & Sage',
-    ogDescription: 'Actionable SEO case studies and gastronomy articles.',
+    ogTitle: 'Margalla Hills Blog & Travel Guides | Islamabad Stories',
+    ogDescription: 'Explore Margalla Hills hiking trails, authentic food guides, places to visit, nature & wildlife, and travel tips for Islamabad.',
     ogImage: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=1200&q=80',
     schemaType: 'Blog' as const,
     searchIntent: 'Informational' as const
@@ -57,17 +60,15 @@ export function BlogListPage({ navigate, posts: initialPosts, categories: initia
   const schemaBlog = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
-    name: 'Saffron & Sage SEO & Culinary Blog',
-    description: 'Expert analysis on modern technical SEO, local pack dominance, and artisanal culinary arts.',
+    name: 'Margalla Hills Blog & Travel Guides',
+    description: 'Explore Margalla Hills hiking trails, authentic food guides, places to visit, nature & wildlife, and travel tips for Islamabad.',
     url: '/blog'
   };
 
-  const blogContentAudit = `# SEO & Culinary Knowledge Base
-Master the art of high-ranking restaurant SEO through real-world experiments and technical architecture.
-## Recent Guides & Industry Research
-Explore our comprehensive collection of actionable tutorials covering schema markup, keyword clustering, and local pack ranking.
-### Educational SEO Lab
-All articles include live on-page metadata auditing and structured JSON-LD schemas.`;
+  const blogContentAudit = `# Margalla Hills Blog & Travel Guides
+Explore comprehensive guides covering Margalla Hills hiking trails, authentic food reviews, scenic places to visit, and local travel insights.
+## Discover Islamabad & Margalla Hills
+Discover our collection of stories about Trail 3 and Trail 5, viewpoints, live barbecue, and mountain wildlife.`;
 
   return (
     <div className="bg-[#0A0A0A] text-slate-300 min-h-screen py-12">
@@ -83,13 +84,13 @@ All articles include live on-page metadata auditing and structured JSON-LD schem
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/60 border border-white/10 text-emerald-400 text-xs font-semibold uppercase tracking-wider font-mono mb-3 backdrop-blur-md">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10B981]" />
             <BookOpen className="w-3.5 h-3.5" />
-            <span>Informational Search Intent &bull; Topical Authority</span>
+            <span>Margalla Hills &bull; Travel &amp; Food Guides</span>
           </div>
           <h1 className="font-serif text-4xl sm:text-5xl font-bold text-white tracking-tight">
-            SEO &amp; Culinary Knowledge Base
+            Margalla Hills Blog &amp; Travel Guides
           </h1>
           <p className="text-base text-slate-400 mt-3 leading-relaxed">
-            Practical tutorials and enterprise benchmarks on local pack domination, structured data schemas, and high-converting restaurant marketing.
+            Discover scenic hiking trails, restaurants &amp; food reviews, wildlife, and Islamabad travel recommendations.
           </p>
         </div>
 
