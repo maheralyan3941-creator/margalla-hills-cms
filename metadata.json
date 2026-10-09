@@ -1,6 +1,6 @@
 {
   "name": "Margalla Hills",
-  "description": "Margalla Hills global fine dining group headquartered in Downtown Dubai (UAE) and Margalla Hills Islamabad, spanning 50+ countries with 400+ authentic dishes, charcoal BBQ, and royal hillside sanctuaries.",
+  "description": "Margalla Hills luxury hilltop restaurant in Islamabad featuring authentic charcoal BBQ, Shinwari karahi, Continental cuisine, and scenic panoramic views.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
