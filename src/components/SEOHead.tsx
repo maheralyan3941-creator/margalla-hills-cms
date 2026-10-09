@@ -14,8 +14,8 @@ interface SEOHeadProps {
 
 export function SEOHead({
   seo,
-  defaultTitle = 'Saffron & Sage Artisanal Kitchen',
-  defaultDescription = 'Modern culinary excellence and interactive SEO practice laboratory.',
+  defaultTitle = 'Margalla Hills | Luxury Dining & Hilltop Restaurant Islamabad',
+  defaultDescription = 'Margalla Hills luxury hilltop restaurant in Islamabad featuring authentic charcoal BBQ, Shinwari karahi, Continental cuisine, and scenic panoramic views.',
   defaultImage = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80',
   schemaData,
   contentForAudit = ''
@@ -28,7 +28,7 @@ export function SEOHead({
   const ogTitle = seo.ogTitle || title;
   const ogDescription = seo.ogDescription || description;
   const ogImage = seo.ogImage || defaultImage;
-  const robots = `${seo.robotsIndex !== false ? 'index' : 'noindex'}, ${seo.robotsFollow !== false ? 'follow' : 'nofollow'}`;
+  const robots = `${seo.robotsIndex !== false ? 'index' : 'follow'}, ${seo.robotsFollow !== false ? 'follow' : 'nofollow'}`;
 
   // Generate fallback schema if none provided
   const finalSchema = schemaData || {
@@ -76,20 +76,13 @@ export function SEOHead({
     }
     canonicalLink.setAttribute('href', canonical);
 
-    // 4. Inject Multi-Country International Hreflang Tags (50+ Countries & Foreign Search Engines)
+    // 4. Clean and inject appropriate Pakistan & Global hreflang Tags
     document.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
     const hreflangTargets = [
       { lang: 'x-default', href: canonical },
-      { lang: 'en-ae', href: `${canonical}${canonical.includes('?') ? '&' : '?'}geo=ae` },
-      { lang: 'ar-ae', href: `${canonical}${canonical.includes('?') ? '&' : '?'}geo=ae&hl=ar` },
       { lang: 'en-pk', href: `${canonical}${canonical.includes('?') ? '&' : '?'}geo=pk` },
       { lang: 'ur-pk', href: `${canonical}${canonical.includes('?') ? '&' : '?'}geo=pk&hl=ur` },
-      { lang: 'en-us', href: `${canonical}${canonical.includes('?') ? '&' : '?'}geo=us` },
-      { lang: 'en-gb', href: `${canonical}${canonical.includes('?') ? '&' : '?'}geo=gb` },
-      { lang: 'en-sa', href: `${canonical}${canonical.includes('?') ? '&' : '?'}geo=sa` },
-      { lang: 'fr-fr', href: `${canonical}${canonical.includes('?') ? '&' : '?'}geo=fr` },
-      { lang: 'de-de', href: `${canonical}${canonical.includes('?') ? '&' : '?'}geo=de` },
-      { lang: 'ja-jp', href: `${canonical}${canonical.includes('?') ? '&' : '?'}geo=jp` }
+      { lang: 'en', href: canonical }
     ];
     hreflangTargets.forEach(({ lang, href }) => {
       const link = document.createElement('link');
