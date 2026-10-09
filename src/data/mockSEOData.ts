@@ -10,7 +10,9 @@ import {
   ComparisonTableRow,
   MasterAnalyticsConfig,
   BacklinkItem,
-  RedirectRule
+  RedirectRule,
+  BlogPost,
+  BlogCategory
 } from '../types';
 
 /**
@@ -364,8 +366,8 @@ export const INITIAL_PROGRAMMATIC_TEMPLATES: ProgrammaticTemplate[] = [
     keywordPattern: 'Luxury {keyword} in {city}',
     cities: [
       'Islamabad', 'Rawalpindi', 'Lahore', 'Karachi', 'Peshawar',
-      'Multan', 'Faisalabad', 'Sialkot', 'Murree', 'Dubai',
-      'Doha', 'London', 'New York'
+      'Multan', 'Faisalabad', 'Sialkot', 'Murree', 'Abbottabad',
+      'Wah Cantt', 'Gujranwala', 'Taxila'
     ],
     templateTitle: 'Luxury Dining & Artisanal Catering in {city} | Margalla Hills',
     templateMetaDesc: 'Discover bespoke culinary banquets, single-origin saffron feasts, and five-star hospitality services by Margalla Hills in {city}.',
@@ -506,5 +508,168 @@ export const INITIAL_REDIRECTS: RedirectRule[] = [
     active: true,
     hits: 689,
     lastAccessed: '2026-09-02T21:40:00Z'
+  }
+];
+
+export const INITIAL_BLOG_CATEGORIES: BlogCategory[] = [
+  {
+    id: 'bcat-margalla-hills',
+    name: 'Margalla Hills',
+    slug: 'margalla-hills',
+    description: 'Stories, viewpoints, and scenic dining on the Margalla Hills ridgeline.'
+  },
+  {
+    id: 'bcat-hiking-trails',
+    name: 'Hiking & Trails',
+    slug: 'hiking-trails',
+    description: 'Guides to Trail 3, Trail 5, Trail 2, and mountain hiking routes in Islamabad.'
+  },
+  {
+    id: 'bcat-islamabad-travel',
+    name: 'Islamabad Travel',
+    slug: 'islamabad-travel',
+    description: 'Travel tips, itineraries, and exploring the federal capital of Pakistan.'
+  },
+  {
+    id: 'bcat-restaurants-food',
+    name: 'Restaurants & Food',
+    slug: 'restaurants-food',
+    description: 'Authentic charcoal BBQ, Shinwari karahi, fine dining, and local cuisine reviews.'
+  },
+  {
+    id: 'bcat-places-to-visit',
+    name: 'Places to Visit',
+    slug: 'places-to-visit',
+    description: 'Must-visit attractions, monuments, viewpoints, and hidden gems in Islamabad.'
+  },
+  {
+    id: 'bcat-nature-wildlife',
+    name: 'Nature & Wildlife',
+    slug: 'nature-wildlife',
+    description: 'Flora, fauna, birdwatching, and national park biodiversity of Margalla Hills.'
+  },
+  {
+    id: 'bcat-travel-guides',
+    name: 'Travel Guides',
+    slug: 'travel-guides',
+    description: 'Comprehensive travel guides, seasonal packing, and visitor recommendations.'
+  }
+];
+
+export const INITIAL_BLOG_POSTS: BlogPost[] = [
+  {
+    id: 'post-scenic-restaurants-margalla',
+    title: 'Top 10 Scenic Restaurants in Margalla Hills: Dining Above the Clouds',
+    slug: 'top-10-scenic-restaurants-margalla-hills',
+    excerpt: 'Discover the most breathtaking rooftop and hillside restaurants across Margalla Hills, offering charcoal BBQ, Himalayan botanicals, and panoramic sunsets over Islamabad.',
+    content: `# Top 10 Scenic Restaurants in Margalla Hills: Dining Above the Clouds
+
+When dining amidst the pristine pine ridges of Islamabad, nothing compares to an artisan meal overlooking panoramic vistas of the capital below.
+
+---
+
+## 1. Margalla Hills Global Flagship Sanctuary
+Perched at an elevation of 3,600 feet, Margalla Hills combines royal Mughal charcoal cooking with Himalayan botanical infusions. Guests enjoy private hillside pavilions, live charcoal grills, and sunset terraces.
+
+### Highlights:
+- Live wood-fired tandoori kebabs and wild-foraged herbal marinades.
+- Temperature-controlled panoramic glass verandas.
+- Direct connectivity to [Fine Dining Menu](/menu) and [Reserve a Table](/contact).
+
+---
+
+## 2. Kohsar Market Culinary Destinations
+For daytime cafe dining and Italian delicacies, Kohsar Market in Sector F-6 remains a classic destination for discerning diners and visitors.
+
+### Tuscany Courtyard Kohsar
+**What to eat**: Choose fresh wood-fired pasta, thin-crust pizza, or charbroiled tenderloin steak. The leafy outdoor seating provides a pleasant terrace vibe for lunch or dinner.
+- **Pros**: Wide choice of continental dishes and Italian favourites.
+- **Atmosphere**: Cosy European bistro interior with outdoor courtyard.
+
+---
+
+## 3. Best Practices for Dining in Margalla Hills
+- **Advance Table Reservations**: Weekend evening tables book up quickly. Always secure reservations early via [Private Dining Reservations](/contact).
+- **Seasonal Specials**: Explore our signature [Artisan Botanicals & Wild Spices](/botanicals) harvested directly from local valleys.`,
+    featuredImage: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80',
+    imageAltText: 'Margalla Hills scenic restaurant sunset dining over Islamabad',
+    category: 'hospitality-seo',
+    tags: ['Margalla Hills', 'Scenic Restaurants', 'Islamabad Dining', 'Kohsar Market'],
+    author: {
+      name: 'Margalla Hills Culinary Critic',
+      role: 'Head of Gastronomy & Hospitality',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80'
+    },
+    status: 'published',
+    publishedAt: '2026-09-27T10:00:00Z',
+    updatedAt: '2026-09-30T12:00:00Z',
+    readTimeMinutes: 5,
+    seo: {
+      seoTitle: 'Top 10 Scenic Restaurants in Margalla Hills | Sunset Dining',
+      metaDescription: 'Discover the best hillside and rooftop dining spots in Margalla Hills Islamabad, featuring panoramic views, charcoal BBQ, and Italian cuisine.',
+      slug: 'top-10-scenic-restaurants-margalla-hills',
+      focusKeyword: 'restaurants in margalla hills',
+      secondaryKeywords: ['scenic dining islamabad', 'kohsar market restaurants'],
+      canonicalUrl: '/blog/top-10-scenic-restaurants-margalla-hills',
+      robotsIndex: true,
+      robotsFollow: true,
+      ogTitle: 'Top 10 Scenic Restaurants in Margalla Hills',
+      ogDescription: 'Experience luxury hillside dining with stunning views of Islamabad.',
+      ogImage: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80',
+      schemaType: 'BlogPosting',
+      searchIntent: 'Commercial'
+    }
+  },
+  {
+    id: 'post-local-seo-guide-2026',
+    title: 'The Comprehensive Restaurant Local SEO Guide: Dominating Google Local Pack in 2026',
+    slug: 'restaurant-local-seo-guide',
+    excerpt: 'Learn how modern hospitality venues capture high-intent diners with optimized Google Business Profiles, localized menu schema, and consistent NAP signals.',
+    content: `# The Comprehensive Restaurant Local SEO Guide: Dominating Google Local Pack
+
+When hungry diners search for **"best saffron biryani near me"** or **"romantic dinner in downtown"**, over 70% of clicks land on the top three Google Local Pack results.
+
+For any hospitality business, capturing this hyper-local traffic is the highest-converting digital channel available.
+
+---
+
+## 1. What Determines Local Search Ranking?
+Google evaluates three core ranking signals:
+1. **Relevance**: How accurately your website matches searcher intent.
+2. **Distance**: Proximity of your venue to the diner.
+3. **Prominence**: Reviews, citations, and quality backlinks.
+
+---
+
+## 2. On-Page Foundations
+Ensure your site has clean structured data, fast mobile loading, and descriptive headings linking to your [Menu](/menu) and [Locations](/locations).`,
+    featuredImage: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80',
+    imageAltText: 'Restaurant local SEO guide dashboard on laptop in kitchen',
+    category: 'local-seo',
+    tags: ['Local SEO', 'Google Maps', 'Restaurant Marketing'],
+    author: {
+      name: 'SEO Editorial Team',
+      role: 'Senior Technical SEO Architect',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80'
+    },
+    status: 'published',
+    publishedAt: '2026-08-20T10:00:00Z',
+    updatedAt: '2026-09-30T10:00:00Z',
+    readTimeMinutes: 6,
+    seo: {
+      seoTitle: 'Restaurant Local SEO Guide 2026 | Google Maps Dominance',
+      metaDescription: 'Step-by-step technical guide for restaurant owners to rank in Google Local 3-Pack and attract footfall.',
+      slug: 'restaurant-local-seo-guide',
+      focusKeyword: 'restaurant local seo',
+      secondaryKeywords: ['local pack ranking', 'google business profile restaurant'],
+      canonicalUrl: '/blog/restaurant-local-seo-guide',
+      robotsIndex: true,
+      robotsFollow: true,
+      ogTitle: 'The Comprehensive Restaurant Local SEO Guide',
+      ogDescription: 'Dominate Google Local Pack and attract high-spending diners.',
+      ogImage: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80',
+      schemaType: 'BlogPosting',
+      searchIntent: 'Informational'
+    }
   }
 ];
