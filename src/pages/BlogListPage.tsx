@@ -155,7 +155,10 @@ All articles include live on-page metadata auditing and structured JSON-LD schem
             {filteredPosts.map((post) => (
               <article
                 key={post.id}
-                onClick={() => navigate(`/blog/${post.slug}`)}
+                onClick={() => {
+                  const cleanSlug = (post.slug || '').replace(/^\/+/, '').replace(/^blog\//, '').replace(/\/+$/, '');
+                  navigate(`/blog/${cleanSlug}`);
+                }}
                 className="bg-[#121212] rounded-2xl overflow-hidden border border-slate-800 hover:border-slate-700 shadow-sm hover:shadow-[0_0_25px_rgba(0,0,0,0.6)] hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group"
               >
                 <div>
