@@ -10,15 +10,15 @@ export function Footer({ navigate }: FooterProps) {
     <footer className="bg-[#080808] text-neutral-400 pt-16 pb-10 border-t border-neutral-800/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Global Locations Bar */}
+        {/* Islamabad Hillside Highlight Bar */}
         <div className="mb-12 p-6 rounded-2xl bg-[#0e1014] border border-neutral-800 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-1 text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-2 text-amber-400 text-xs font-mono font-semibold">
-              <Globe className="w-4 h-4" />
-              <span>Worldwide Fine Dining Network Across 50+ Countries</span>
+              <MapPin className="w-4 h-4" />
+              <span>Hilltop Scenic Dining &bull; Margalla Hills Islamabad</span>
             </div>
             <p className="text-xs text-neutral-300">
-              Primary Global Flagship in <strong>Downtown Dubai, UAE</strong> &bull; Heritage Mountain Sanctuary in <strong>Margalla Hills Islamabad</strong> &bull; International branches in London, New York, Tokyo, Paris, Riyadh, Singapore &amp; 45+ more.
+              Perched atop the scenic Margalla Ridge along <strong>Pir Sohawa Road, Islamabad</strong> &bull; Authentic charcoal BBQ, Shinwari karahi, handi specialties, and breathtaking sunset views over the capital.
             </p>
           </div>
 
@@ -27,15 +27,15 @@ export function Footer({ navigate }: FooterProps) {
               onClick={() => navigate('/locations')}
               className="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl transition cursor-pointer shadow-md flex items-center gap-1.5"
             >
-              <Globe className="w-3.5 h-3.5" />
-              <span>View All 50+ Countries</span>
+              <MapPin className="w-3.5 h-3.5" />
+              <span>Get Directions</span>
             </button>
             <button
               onClick={() => navigate('/contact')}
               className="px-4 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-amber-400 border border-amber-500/30 text-xs rounded-xl transition cursor-pointer flex items-center gap-1.5"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>VIP Reservations</span>
+              <span>Table Reservations</span>
             </button>
           </div>
         </div>
@@ -52,33 +52,27 @@ export function Footer({ navigate }: FooterProps) {
                   Margalla Hills
                 </span>
                 <span className="text-[10px] tracking-[0.22em] text-amber-400 uppercase block mt-1 font-medium font-mono">
-                  Dubai HQ &bull; Global Sanctuaries
+                  Hilltop Dining &bull; Islamabad
                 </span>
               </div>
             </div>
             <p className="text-xs text-neutral-400 leading-relaxed">
-              Global fine dining luxury group with 400+ authentic dishes, live charcoal BBQ, royal Kashmiri Wazwan, and single-origin saffron gastronomy across 50+ international branches.
+              Premier mountain restaurant in Islamabad featuring 400+ authentic culinary dishes, live charcoal barbecue, Shinwari karahi, and scenic panoramic dining overlooking Islamabad.
             </p>
-            <div className="flex items-center gap-2 pt-1 text-xs text-amber-400/90 font-serif">
-              <Award className="w-4 h-4 text-amber-400 shrink-0" />
-              <span>Global Flagship in Dubai &bull; Islamabad Mountain Sanctuary</span>
+            <div className="flex items-center gap-2 pt-1 text-xs text-emerald-400 font-serif">
+              <Award className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span>Pir Sohawa Road &bull; Islamabad, Pakistan</span>
             </div>
           </div>
 
-          {/* Menus & Global Locations */}
+          {/* Menus & Locations */}
           <div>
             <h4 className="text-[11px] font-bold text-white uppercase tracking-[0.2em] mb-4 font-mono">
-              Menus &amp; Global Directory
+              Menus &amp; Specialties
             </h4>
             <ul className="space-y-2.5 text-xs">
               <li>
-                <button onClick={() => navigate('/locations')} className="text-amber-400 hover:text-amber-300 font-semibold transition cursor-pointer flex items-center gap-1.5">
-                  <Globe className="w-3.5 h-3.5" />
-                  <span>50+ Countries Branch Directory</span>
-                </button>
-              </li>
-              <li>
-                <button onClick={() => navigate('/menu')} className="hover:text-amber-400 transition cursor-pointer">
+                <button onClick={() => navigate('/menu')} className="hover:text-amber-400 transition cursor-pointer text-amber-400 font-medium">
                   Complete 400+ Dishes Menu Catalog
                 </button>
               </li>
@@ -99,8 +93,8 @@ export function Footer({ navigate }: FooterProps) {
                 </button>
               </li>
               <li>
-                <button onClick={() => navigate('/compendium')} className="hover:text-amber-400 transition cursor-pointer text-neutral-400">
-                  400 Chapters Gastronomy Compendium
+                <button onClick={() => navigate('/locations')} className="hover:text-amber-400 transition cursor-pointer text-neutral-400">
+                  Location &amp; Hiking Trail Approaches
                 </button>
               </li>
             </ul>
@@ -120,64 +114,52 @@ export function Footer({ navigate }: FooterProps) {
               </li>
               <li>
                 <button onClick={() => navigate('/services')} className="hover:text-amber-400 transition cursor-pointer">
-                  Diplomatic Banquets &amp; Royal Catering
+                  Banquet Hall &amp; Wedding Catering
                 </button>
               </li>
               <li>
                 <button onClick={() => navigate('/tasting-menu')} className="hover:text-amber-400 transition cursor-pointer">
-                  Royal Saffron Tasting Menu
-                </button>
-              </li>
-              <li>
-                <button onClick={() => navigate('/wine-cellar')} className="hover:text-amber-400 transition cursor-pointer">
-                  Artisanal Botanicals &amp; Rare Tea Cellar
+                  Executive Chef Tasting Menu
                 </button>
               </li>
               <li>
                 <button onClick={() => navigate('/gallery')} className="hover:text-amber-400 transition cursor-pointer">
-                  Sanctuary Photo Gallery
+                  Restaurant Photo Gallery
                 </button>
               </li>
               <li>
-                <button onClick={() => navigate('/contact')} className="hover:text-amber-400 transition cursor-pointer text-neutral-400">
-                  Concierge &amp; Private Hire
+                <button onClick={() => navigate('/blog')} className="hover:text-amber-400 transition cursor-pointer text-neutral-400">
+                  Gastronomy Blog &amp; Guides
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Dual Headquarters Contact */}
+          {/* Location & Contact */}
           <div className="space-y-3 text-xs">
             <h4 className="text-[11px] font-bold text-white uppercase tracking-[0.2em] mb-4 font-mono">
-              Dual Headquarters
+              Location &amp; Contact
             </h4>
             
-            {/* Dubai HQ */}
-            <div className="p-3 bg-neutral-950 rounded-xl border border-amber-500/30 space-y-1">
-              <span className="text-amber-400 font-bold font-mono text-[10px] uppercase block">
-                Dubai Global Flagship (UAE)
-              </span>
-              <p className="text-[11px] text-neutral-300">Sheikh Mohammed bin Rashid Blvd, Downtown Dubai</p>
-              <a href="tel:+97145558921" className="text-amber-400 font-mono text-xs hover:underline block">
-                Phone: +971 4 555 8921
-              </a>
-            </div>
-
-            {/* Islamabad Heritage */}
-            <div className="p-3 bg-neutral-950 rounded-xl border border-emerald-500/30 space-y-1">
+            <div className="p-3 bg-neutral-950 rounded-xl border border-emerald-500/30 space-y-1.5">
               <span className="text-emerald-400 font-bold font-mono text-[10px] uppercase block">
-                Islamabad Mountain Sanctuary (PK)
+                Margalla Hills Restaurant &bull; Islamabad
               </span>
-              <p className="text-[11px] text-neutral-300">Pir Sohawa Road &amp; Daman-e-Koh, Margalla Hills</p>
-              <a
-                href="https://wa.me/923294785579?text=Hello%20Margalla%20Hills%2C%20I%20would%20like%20to%20reserve%20a%20table%20or%20order%20food."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-emerald-400 font-mono text-xs hover:underline flex items-center gap-1"
-              >
-                <MessageCircle className="w-3.5 h-3.5 fill-emerald-400" />
-                <span>WhatsApp: +92 329 4785579</span>
-              </a>
+              <p className="text-[11px] text-neutral-300">Pir Sohawa Road, Margalla Ridge, Islamabad, Pakistan</p>
+              <div className="pt-1 space-y-1">
+                <a
+                  href="https://wa.me/923294785579?text=Hello%20Margalla%20Hills%2C%20I%20would%20like%20to%20reserve%20a%20table%20or%20order%20food."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-emerald-400 font-mono text-xs hover:underline flex items-center gap-1"
+                >
+                  <MessageCircle className="w-3.5 h-3.5 fill-emerald-400" />
+                  <span>WhatsApp: +92 329 4785579</span>
+                </a>
+                <a href="tel:+92512821122" className="text-amber-400 font-mono text-xs hover:underline block">
+                  Landline: +92 51 282 1122
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -185,14 +167,16 @@ export function Footer({ navigate }: FooterProps) {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-neutral-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
           <p>
-            &copy; {new Date().getFullYear()} Margalla Hills Global Group. Dubai HQ &bull; Islamabad Heritage &bull; 50+ Country Branches.
+            &copy; {new Date().getFullYear()} Margalla Hills Restaurant &amp; Resort. Pir Sohawa Road, Islamabad, Pakistan.
           </p>
           <div className="flex items-center gap-4 text-[11px]">
-            <button onClick={() => navigate('/locations')} className="hover:text-amber-400 transition">50+ Countries</button>
+            <button onClick={() => navigate('/locations')} className="hover:text-amber-400 transition">Location Map</button>
             <span>&bull;</span>
-            <button onClick={() => navigate('/about')} className="hover:text-amber-400 transition">About Heritage</button>
+            <button onClick={() => navigate('/about')} className="hover:text-amber-400 transition">About Us</button>
             <span>&bull;</span>
             <button onClick={() => navigate('/menu')} className="hover:text-neutral-300 transition">Menu (400+)</button>
+            <span>&bull;</span>
+            <button onClick={() => navigate('/blog')} className="hover:text-amber-400 transition">Blog</button>
           </div>
         </div>
       </div>
