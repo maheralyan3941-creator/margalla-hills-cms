@@ -877,7 +877,10 @@ class DatabaseManager {
   }
 
   public getBlogPostBySlug(slug: string) {
-    return this.data.blogPosts.find(p => p.slug === slug);
+    if (!slug) return undefined;
+    const clean = (s: string) => (s || '').replace(/^\/+/, '').replace(/\/+$/, '').replace(/^blog\//, '').trim().toLowerCase();
+    const target = clean(decodeURIComponent(slug));
+    return this.data.blogPosts.find(p => clean(p.slug) === target || p.slug === slug || p.id === slug);
   }
 
   public getBlogPostById(id: string) {
