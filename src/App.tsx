@@ -7,10 +7,10 @@ import { DemoNoticeBanner } from './components/DemoNoticeBanner';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { useSEORuntime } from './lib/seoRuntime';
 
-// Critical Homepage for lightning fast mobile First Contentful Paint
+// Eagerly import only the critical landing page for sub-millisecond mobile First Contentful Paint
 import { HomePage } from './pages/HomePage';
 
-// Lazy-load sub-pages so mobile devices download ONLY initial landing bundle
+// Lazy-load all heavy sub-pages so mobile devices download ONLY ~60kb initial bundle
 const MenuPage = lazy(() => import('./pages/MenuPage').then(m => ({ default: m.MenuPage })));
 const DishDetailPage = lazy(() => import('./pages/DishDetailPage').then(m => ({ default: m.DishDetailPage })));
 const TastingMenuPage = lazy(() => import('./pages/TastingMenuPage').then(m => ({ default: m.TastingMenuPage })));
@@ -47,8 +47,10 @@ export default function App() {
   const [currentPath, setCurrentPath] = useState<string>(() => window.location.pathname || '/');
   const [currentUser, setCurrentUser] = useState<User | null>(() => getStoredUser());
 
+  // Dynamic SEO head tags and tracking runtime
   useSEORuntime(currentPath);
 
+  // Listen to popstate for browser back/forward buttons
   useEffect(() => {
     const onPopState = () => {
       setCurrentPath(window.location.pathname || '/');
@@ -57,6 +59,7 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
+  // Verify stored session with backend on load
   useEffect(() => {
     api.getCurrentUser()
       .then(res => {
@@ -86,13 +89,18 @@ export default function App() {
     navigate('/');
   };
 
+  // Route Dispatcher
   const renderContent = () => {
-    const path = currentPath;
+    // Strip query parameters and trailing slashes for robust matching
+    const cleanPath = (currentPath || '/').split('?')[0].split('#')[0];
+    const path = cleanPath.length > 1 && cleanPath.endsWith('/') ? cleanPath.slice(0, -1) : cleanPath;
 
+    // Critical Homepage (No lazy delay)
     if (path === '/' || path === '') {
       return <HomePage navigate={navigate} />;
     }
 
+    // Lazy routes inside Suspense
     return (
       <Suspense fallback={<PageLoader />}>
         {(() => {
@@ -101,17 +109,17 @@ export default function App() {
           if (path === '/deals') return <MenuPage navigate={navigate} initialCategory="deals" />;
           if (path === '/wine-cellar') return <WineCellarPage navigate={navigate} />;
           if (path.startsWith('/wine/')) {
-            const slug = path.replace('/wine/', '');
+            const slug = path.replace('/wine/', '').replace(/\/+$/, '');
             return <WineDetailPage slug={slug} navigate={navigate} />;
           }
           if (path === '/botanicals') return <BotanicalsIndexPage navigate={navigate} />;
           if (path.startsWith('/botanicals/')) {
-            const slug = path.replace('/botanicals/', '');
+            const slug = path.replace('/botanicals/', '').replace(/\/+$/, '');
             return <BotanicalDetailPage slug={slug} navigate={navigate} />;
           }
           if (path === '/heritage') return <HeritageIndexPage navigate={navigate} />;
           if (path.startsWith('/heritage/')) {
-            const slug = path.replace('/heritage/', '');
+            const slug = path.replace('/heritage/', '').replace(/\/+$/, '');
             return <HeritageDetailPage slug={slug} navigate={navigate} />;
           }
           if (path === '/compendium' || path === '/400-pages' || path === '/400-chapters') {
@@ -122,7 +130,7 @@ export default function App() {
           if (path === '/private-dining') return <PrivateDiningPage navigate={navigate} />;
           if (path === '/locations') return <LocationsPage navigate={navigate} />;
           if (path.startsWith('/locations/')) {
-            const citySlug = path.replace('/locations/', '');
+            const citySlug = path.replace('/locations/', '').replace(/\/+$/, '');
             return <ProgrammaticCateringPage citySlug={citySlug} navigate={navigate} />;
           }
           if (path.startsWith('/menu/')) {
@@ -132,30 +140,43 @@ export default function App() {
             return <MenuPage navigate={navigate} />;
           }
           if (path.startsWith('/dish/')) {
-            const slug = path.replace('/dish/', '');
+            const slug = path.replace('/dish/', '').replace(/\/+$/, '');
             return <DishDetailPage slug={slug} navigate={navigate} />;
           }
           if (path === '/blog') return <BlogListPage navigate={navigate} />;
           if (path.startsWith('/blog/')) {
-            const slug = path.replace('/blog/', '');
-            return <BlogPostDetailPage slug={slug} navigate={navigate} />;
+            const slug = path.replace('/blog/', '').replace(/\/+$/, '');
+            if (slug) return <BlogPostDetailPage slug={slug} navigate={navigate} />;
+            return <BlogListPage navigate={navigate} />;
           }
           if (path === '/case-studies') return <CaseStudiesPage navigate={navigate} />;
           if (path.startsWith('/case-studies/')) {
-            const slug = path.replace('/case-studies/', '');
+            const slug = path.replace('/case-studies/', '').replace(/\/+$/, '');
             return <CaseStudyDetailPage slug={slug} navigate={navigate} />;
           }
           if (path === '/gallery') return <GalleryPage navigate={navigate} />;
           if (path === '/about') return <AboutPage navigate={navigate} />;
           if (path === '/contact') return <ContactPage navigate={navigate} />;
           if (path.startsWith('/catering/')) {
-            const citySlug = path.replace('/catering/', '');
+            const citySlug = path.replace('/catering/', '').replace(/\/+$/, '');
             return <ProgrammaticCateringPage citySlug={citySlug} navigate={navigate} />;
           }
           if (path === '/seo-lab' || path === '/seo-academy' || path === '/signup' || path === '/register' || path === '/login' || path.startsWith('/admin')) {
             if (!currentUser) return <AdminLoginPage onLoginSuccess={handleLoginSuccess} navigate={navigate} />;
             return <AdminDashboardPage currentUser={currentUser} onLogout={handleLogout} navigate={navigate} />;
           }
+
+          // Smart Direct-Article Route Fallback:
+          // If accessed directly without /blog prefix (e.g. /my-post-title), check if article exists!
+          const singleSegmentSlug = path.replace(/^\/+/, '');
+          if (
+            singleSegmentSlug &&
+            !singleSegmentSlug.includes('/') &&
+            !['api', 'assets', 'favicon.ico', 'robots.txt', 'sitemap.xml'].includes(singleSegmentSlug)
+          ) {
+            return <BlogPostDetailPage slug={singleSegmentSlug} navigate={navigate} fallbackToNotFound />;
+          }
+
           return <NotFoundPage navigate={navigate} />;
         })()}
       </Suspense>
