@@ -23,28 +23,29 @@ export interface GlobalLocation {
 
 export const GLOBAL_LOCATIONS: GlobalLocation[] = [
   // ==========================================
-  // 1. MIDDLE EAST & GCC (DUBAI GLOBAL FLAGSHIP)
+  // 1. ISLAMABAD MOUNTAIN FLAGSHIP (PRIMARY SANCTUARY)
   // ==========================================
   {
-    id: 'dubai-flagship',
-    country: 'United Arab Emirates',
-    countryCode: 'AE',
-    city: 'Dubai',
-    district: 'Downtown Opera District & DIFC',
-    region: 'Middle East & GCC',
+    id: 'islamabad-flagship',
+    country: 'Pakistan',
+    countryCode: 'PK',
+    city: 'Islamabad',
+    district: 'Pir Sohawa Road, Margalla Ridge',
+    region: 'South Asia',
     isGlobalFlagship: true,
-    address: 'Sheikh Mohammed bin Rashid Blvd, Downtown Dubai & Gate Village DIFC, UAE',
-    phone: '+971 4 555 8921',
-    email: 'dubai@margallahills.com',
-    hours: 'Daily: 12:00 PM - 2:00 AM | Midnight Saffron Terrace Lounge',
-    currency: 'AED',
-    currencySymbol: 'AED',
-    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=80',
+    isHeritageSanctuary: true,
+    address: 'Pir Sohawa Road & Daman-e-Koh Ridgeline, Islamabad 44000, Pakistan',
+    phone: '+92 329 4785579',
+    email: 'reservations@margallahills.com',
+    hours: 'Daily: 11:00 AM - 1:00 AM',
+    currency: 'PKR',
+    currencySymbol: 'PKR',
+    image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80',
     status: 'Open Daily',
-    features: ['Burj Khalifa Skyline Terrace', 'Royal 24k Gold Biryani', 'Private DIFC Dining Vault', 'Valet Parking Concierge'],
-    localSeoKeywords: ['fine dining downtown dubai', 'luxury halal restaurant dubai difc', 'best indian pakistani food dubai', 'private dining rooms dubai'],
+    features: ['Panoramic Margalla Ridge Forest Terraces', 'Live Charcoal Barbecue & Shinwari Karahi', 'Private Family VIP Pavilions', 'Valet Parking Concierge'],
+    localSeoKeywords: ['best restaurant in islamabad', 'margalla hills dining', 'pir sohawa restaurant', 'charcoal bbq islamabad'],
     gmbVerified: true,
-    geo: { lat: 25.1972, lng: 55.2744 }
+    geo: { lat: 33.7438, lng: 73.0645 }
   },
   {
     id: 'abu-dhabi',
