@@ -59,11 +59,21 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
   const [seoTitle, setSeoTitle] = useState(''); // seo_title (for Google title tag, target 60 chars)
   const [metaDesc, setMetaDesc] = useState(''); // meta_desc (for meta description, target 150 chars)
 
+  const DEFAULT_CATEGORIES = [
+    'Margalla Hills',
+    'Hiking & Trails',
+    'Islamabad Travel',
+    'Restaurants & Food',
+    'Places to Visit',
+    'Nature & Wildlife',
+    'Travel Guides'
+  ];
+
   // Additional Post Metadata
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [targetKeyword, setTargetKeyword] = useState('');
-  const [category, setCategory] = useState('hospitality-seo');
+  const [category, setCategory] = useState('Margalla Hills');
   const [excerpt, setExcerpt] = useState('');
   const [content, setContent] = useState('');
   const [featuredImage, setFeaturedImage] = useState('');
@@ -385,7 +395,7 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
     setTitle('');
     setSlug('');
     setTargetKeyword('');
-    setCategory('hospitality-seo');
+    setCategory('Margalla Hills');
     setExcerpt('');
     setContent('');
     setFeaturedImage('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80');
@@ -702,11 +712,13 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
                   onChange={(e) => setCategory(e.target.value)}
                   className="w-full px-3.5 py-2.5 bg-black border border-neutral-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-400"
                 >
-                  <option value="hospitality-seo">Restaurant &amp; Hospitality SEO</option>
-                  <option value="local-seo">Local SEO &amp; Google Maps</option>
-                  <option value="culinary-heritage">Culinary Heritage &amp; Dining Guides</option>
-                  <option value="technical-seo">Technical SEO &amp; Schema</option>
-                  <option value="events-catering">VIP Dining &amp; Private Events</option>
+                  <option value="Margalla Hills">Margalla Hills</option>
+                  <option value="Hiking & Trails">Hiking &amp; Trails</option>
+                  <option value="Islamabad Travel">Islamabad Travel</option>
+                  <option value="Restaurants & Food">Restaurants &amp; Food</option>
+                  <option value="Places to Visit">Places to Visit</option>
+                  <option value="Nature & Wildlife">Nature &amp; Wildlife</option>
+                  <option value="Travel Guides">Travel Guides</option>
                 </select>
               </div>
             </div>
