@@ -88,7 +88,7 @@ const BOTANICAL_CORE_NAMES = [
 const CITY_CATERING_NAMES = [
   'Manhattan Central Park Penthouse Gala Catering',
   'Mayfair & Knightsbridge London Diplomatic Banquet',
-  'Downtown Dubai Burj Khalifa Sky Lounge Reception',
+  'Margalla Hills Pine Ridge Open-Air Sky Lounge Banquet',
   'Beverly Hills Bel Air Celebrity Estate Soirée',
   'Parisian 8th Arrondissement Haute Gastronomy Feast',
   'Tokyo Ginza High-Roller Private Salon Banquet',
@@ -128,7 +128,7 @@ const REGIONS = [
   'Oaxaca, Mexico',
   'Highland Himalayas',
   'Napa Valley, California',
-  'Dubai International Financial Centre',
+  'Margalla National Park Ridgeline',
   'Reims, Champagne'
 ];
 
