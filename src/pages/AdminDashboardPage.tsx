@@ -405,9 +405,18 @@ export function AdminDashboardPage({ currentUser, onLogout, navigate }: AdminDas
   };
 
   // Section 13: Analytics & SEO Tools
-  const handleUpdateAnalyticsConfig = (cfg: MasterAnalyticsConfig) => {
+  const handleUpdateAnalyticsConfig = async (cfg: MasterAnalyticsConfig) => {
     setAnalyticsConfig(cfg);
-    showToast('All 4 Analytics & tracking IDs saved');
+    try {
+      await api.updateSEOSettings({
+        googleAnalyticsId: cfg.ga4Id,
+        googleSearchConsoleVerification: cfg.googleSearchConsoleVerification,
+        robotsTxtContent: cfg.robotsTxtContent
+      });
+      showToast('Saved & Synced to Neon Database & Live Server HTML');
+    } catch {
+      showToast('Saved locally');
+    }
   };
 
   // Dish Operations
@@ -685,7 +694,10 @@ export function AdminDashboardPage({ currentUser, onLogout, navigate }: AdminDas
           {/* LIVE BLOG & ARTICLE PUBLISHER */}
           {activeTab === 'blog-publisher' && (
             <ModuleBlogPublishing
-              onNavigateToPost={(url) => navigate(url)}
+              onNavigateToPost={(slugOrPath) => {
+                const cleanSlug = (slugOrPath || '').replace(/^\/+/, '').replace(/^blog\//, '').replace(/\/+$/, '');
+                navigate(`/blog/${cleanSlug}`);
+              }}
               showToast={showToast}
             />
           )}
