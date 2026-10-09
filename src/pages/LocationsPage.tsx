@@ -18,7 +18,8 @@ import {
   ShieldCheck,
   Building2,
   Share2,
-  MessageCircle
+  MessageCircle,
+  Tag
 } from 'lucide-react';
 import { SEOHead } from '../components/SEOHead';
 import { GLOBAL_LOCATIONS, GlobalLocation } from '../data/globalLocations';
@@ -32,16 +33,16 @@ export function LocationsPage({ navigate }: LocationsPageProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const locationsSEO = {
-    seoTitle: 'Global Flagship Locations in 50+ Countries | Dubai, Islamabad, London, New York | Margalla Hills',
-    metaDescription: 'Discover Margalla Hills fine dining sanctuaries across 50+ countries. Global Flagship in Downtown Dubai, Heritage Mountain Sanctuary in Islamabad, and prestigious branches worldwide.',
+    seoTitle: 'Location, Pir Sohawa Road & Hiking Trail Access | Margalla Hills Restaurant Islamabad',
+    metaDescription: 'Find directions, GPS coordinates, Trail 3 & 5 access, and hilltop parking for Margalla Hills Restaurant along Pir Sohawa Road, Islamabad.',
     slug: 'locations',
-    focusKeyword: 'fine dining locations 50 countries',
-    secondaryKeywords: ['dubai luxury dining', 'islamabad margalla hills restaurant', 'fine dining global branches', 'london mayfair dining', 'luxury restaurant dubai'],
+    focusKeyword: 'margalla hills restaurant islamabad location',
+    secondaryKeywords: ['pir sohawa restaurant', 'daman-e-koh dining', 'margalla hills bbq restaurant', 'islamabad hilltop restaurant'],
     canonicalUrl: '/locations',
     robotsIndex: true,
     robotsFollow: true,
-    ogTitle: 'Global Flagship Locations in 50+ Countries | Margalla Hills',
-    ogDescription: 'Experience our artisanal culinary sanctuaries worldwide from Downtown Dubai to Margalla Hills Islamabad, London, New York, and Tokyo.',
+    ogTitle: 'Location & Mountain Dining Access | Margalla Hills Islamabad',
+    ogDescription: 'Find directions, GPS coordinates, Trail 3 & 5 access, and hilltop parking for Margalla Hills Restaurant along Pir Sohawa Road, Islamabad.',
     ogImage: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80',
     schemaType: 'LocalBusiness' as const,
     searchIntent: 'Navigational' as const
@@ -49,12 +50,10 @@ export function LocationsPage({ navigate }: LocationsPageProps) {
 
   const regions = [
     'All',
-    'Middle East & GCC',
-    'South Asia',
-    'Europe',
-    'North America',
-    'Asia-Pacific',
-    'Africa & LATAM'
+    'Hilltop Terraces',
+    'Pir Sohawa Road',
+    'Margalla Ridge',
+    'Twin Cities Delivery'
   ];
 
   const filteredLocations = useMemo(() => {
@@ -75,124 +74,71 @@ export function LocationsPage({ navigate }: LocationsPageProps) {
     <div className="bg-[#0A0A0A] text-slate-200 min-h-screen">
       <SEOHead seo={locationsSEO} />
 
-      {/* Hero Section with Dubai Global Flagship Announcement */}
+      {/* Hero Section */}
       <section className="relative py-20 sm:py-24 px-4 sm:px-6 lg:px-8 border-b border-neutral-800/80 overflow-hidden bg-gradient-to-b from-[#141416] via-[#0D0D0E] to-[#0A0A0A]">
         <div className="max-w-5xl mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono tracking-widest uppercase">
-            <Globe className="w-3.5 h-3.5" />
-            <span>Worldwide Fine Dining Network &bull; 50+ Countries</span>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono tracking-widest uppercase">
+            <MapPin className="w-3.5 h-3.5" />
+            <span>Pir Sohawa Road &bull; Margalla Hills Islamabad</span>
           </div>
 
           <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight">
-            Our Global Flagships &amp; International Sanctuaries
+            Location, Directions &amp; Mountain Terraces
           </h1>
 
           <p className="text-sm sm:text-base text-neutral-400 max-w-3xl mx-auto leading-relaxed">
-            Headquartered at our <strong className="text-amber-400 font-semibold">Downtown Dubai Global Flagship (UAE)</strong> and rooted in our iconic <strong className="text-emerald-400 font-semibold">Margalla Hills Mountain Sanctuary (Islamabad)</strong>, Margalla Hills now operates private culinary sanctuaries and bespoke catering across 50+ countries worldwide.
+            Perched atop the pine-covered ridgelines along <strong className="text-emerald-400 font-semibold">Pir Sohawa Road, Islamabad</strong>, Margalla Hills offers breathtaking panoramic views of the federal capital, live charcoal barbecue, Shinwari karahi, and secluded family dining terraces.
           </p>
 
           {/* Quick Metrics Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto pt-4">
             <div className="p-3.5 rounded-2xl bg-black/60 border border-neutral-800 text-center">
-              <span className="text-2xl font-serif font-bold text-amber-400 block">50+</span>
-              <span className="text-[11px] text-neutral-400 uppercase tracking-wider font-mono">Countries</span>
+              <span className="text-2xl font-serif font-bold text-amber-400 block">400+</span>
+              <span className="text-[11px] text-neutral-400 uppercase tracking-wider font-mono">Dishes &amp; BBQ</span>
             </div>
             <div className="p-3.5 rounded-2xl bg-black/60 border border-neutral-800 text-center">
-              <span className="text-2xl font-serif font-bold text-white block">Dubai, UAE</span>
-              <span className="text-[11px] text-neutral-400 uppercase tracking-wider font-mono">Global HQ Flagship</span>
+              <span className="text-2xl font-serif font-bold text-emerald-400 block">Pir Sohawa</span>
+              <span className="text-[11px] text-neutral-400 uppercase tracking-wider font-mono">Margalla Ridge</span>
             </div>
             <div className="p-3.5 rounded-2xl bg-black/60 border border-neutral-800 text-center">
-              <span className="text-2xl font-serif font-bold text-emerald-400 block">Islamabad</span>
-              <span className="text-[11px] text-neutral-400 uppercase tracking-wider font-mono">Heritage Sanctuary</span>
+              <span className="text-2xl font-serif font-bold text-white block">Daily</span>
+              <span className="text-[11px] text-neutral-400 uppercase tracking-wider font-mono">11:00 AM - 1:00 AM</span>
             </div>
             <div className="p-3.5 rounded-2xl bg-black/60 border border-neutral-800 text-center">
-              <span className="text-2xl font-serif font-bold text-blue-400 block">100%</span>
-              <span className="text-[11px] text-neutral-400 uppercase tracking-wider font-mono">Local SEO Schema</span>
+              <span className="text-2xl font-serif font-bold text-blue-400 block">Free</span>
+              <span className="text-[11px] text-neutral-400 uppercase tracking-wider font-mono">Valet Parking</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FEATURED TWIN SANCTUARIES: DUBAI & ISLAMABAD */}
+      {/* FEATURED RESTAURANT SANCTUARY: ISLAMABAD */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Dubai Flagship Card */}
-          <div className="relative rounded-3xl bg-gradient-to-br from-[#1c160e] via-[#14120f] to-[#0d0d0e] border-2 border-amber-500/50 p-6 sm:p-8 shadow-2xl overflow-hidden group">
-            <div className="absolute top-4 right-4 px-3 py-1 bg-amber-500 text-black font-bold text-[10px] font-mono uppercase tracking-wider rounded-full shadow-lg">
-              Global Flagship &bull; Dubai HQ
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-amber-400 text-xs font-mono font-semibold">
-                <Building2 className="w-4 h-4" />
-                <span>United Arab Emirates &bull; Middle East HQ</span>
-              </div>
-
-              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white group-hover:text-amber-300 transition">
-                Downtown Dubai &amp; Gate Village DIFC
-              </h2>
-
-              <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed">
-                Overlooking the Burj Khalifa skyline and Dubai Opera District. Featuring royal 24k gold leaf saffron biryanis, private DIFC sovereign wealth vaults, and midnight terrace seating.
-              </p>
-
-              <div className="space-y-2 text-xs text-neutral-400 font-mono pt-2">
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                  <span className="text-neutral-200">Sheikh Mohammed bin Rashid Blvd, Downtown Dubai, UAE</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                  <a href="tel:+97145558921" className="text-amber-400 font-bold hover:underline">+971 4 555 8921</a>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                  <span>Daily: 12:00 PM - 2:00 AM (AED Currency)</span>
-                </div>
-              </div>
-
-              <div className="pt-4 flex flex-wrap gap-3">
-                <button
-                  onClick={() => navigate('/contact')}
-                  className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-serif font-bold text-xs uppercase tracking-wider rounded-xl transition cursor-pointer shadow-md"
-                >
-                  Reserve Dubai Table
-                </button>
-                <a
-                  href="tel:+97145558921"
-                  className="px-4 py-2.5 bg-black/60 hover:bg-neutral-800 text-neutral-300 text-xs font-mono rounded-xl border border-neutral-700 transition flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Phone className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Call DIFC Concierge</span>
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Islamabad Sanctuary Card */}
+          {/* Main Hilltop Restaurant Card */}
           <div className="relative rounded-3xl bg-gradient-to-br from-[#0e1c14] via-[#0f1412] to-[#0d0d0e] border-2 border-emerald-500/50 p-6 sm:p-8 shadow-2xl overflow-hidden group">
             <div className="absolute top-4 right-4 px-3 py-1 bg-emerald-500 text-black font-bold text-[10px] font-mono uppercase tracking-wider rounded-full shadow-lg">
-              Heritage Mountain Sanctuary
+              Hilltop Flagship Sanctuary
             </div>
 
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-emerald-400 text-xs font-mono font-semibold">
                 <Compass className="w-4 h-4" />
-                <span>Pakistan &bull; Himalayan Heritage</span>
+                <span>Margalla Hills Ridge &bull; Islamabad</span>
               </div>
 
               <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white group-hover:text-emerald-300 transition">
-                Margalla Hills Scenic Ridgeline
+                Pir Sohawa Road Panoramic Restaurant
               </h2>
 
               <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed">
-                Nestled on the serene pine ridgeline above Islamabad. Wood-fired Kashmiri clay tandoors, single-origin saffron tea bar, and private diplomatic mountain pavilions.
+                Perched high on the pine ridgeline above Islamabad overlooking Daman-e-Koh and the city lights. Wood-fired clay tandoors, authentic live charcoal barbecue, Shinwari karahi, and private family pavilions.
               </p>
 
               <div className="space-y-2 text-xs text-neutral-400 font-mono pt-2">
                 <div className="flex items-center gap-2">
                   <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span className="text-neutral-200">Daman-e-Koh Ridgeline &amp; Beverly Centre F-6, Islamabad</span>
+                  <span className="text-neutral-200">Pir Sohawa Road, Margalla Ridge, Islamabad, 44000</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
@@ -200,7 +146,7 @@ export function LocationsPage({ navigate }: LocationsPageProps) {
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span>Daily: 11:00 AM - 1:00 AM (PKR Currency)</span>
+                  <span>Daily: 11:00 AM - 1:00 AM (Dine-in, Open Air &amp; Takeaway)</span>
                 </div>
               </div>
 
@@ -209,17 +155,70 @@ export function LocationsPage({ navigate }: LocationsPageProps) {
                   onClick={() => navigate('/contact')}
                   className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black font-serif font-bold text-xs uppercase tracking-wider rounded-xl transition cursor-pointer shadow-md"
                 >
-                  Reserve Islamabad Table
+                  Reserve Hillside Table
                 </button>
                 <a
-                  href="https://wa.me/923294785579?text=Hello%20Margalla%20Hills%20Islamabad%2C%20I%20would%20like%20to%20reserve%20a%20table."
+                  href="https://wa.me/923294785579?text=Hello%20Margalla%20Hills%2C%20I%20want%20to%20reserve%20a%20table%20or%20get%20directions."
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2.5 bg-black/60 hover:bg-neutral-800 text-emerald-300 text-xs font-mono rounded-xl border border-emerald-900/60 transition flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2.5 bg-black/60 hover:bg-neutral-800 text-emerald-300 text-xs font-mono rounded-xl border border-emerald-700/50 transition flex items-center gap-1.5 cursor-pointer"
                 >
                   <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>WhatsApp Booking</span>
+                  <span>WhatsApp Concierge</span>
                 </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Hiking Trails & Approach Card */}
+          <div className="relative rounded-3xl bg-gradient-to-br from-[#1c160e] via-[#14120f] to-[#0d0d0e] border-2 border-amber-500/50 p-6 sm:p-8 shadow-2xl overflow-hidden group">
+            <div className="absolute top-4 right-4 px-3 py-1 bg-amber-500 text-black font-bold text-[10px] font-mono uppercase tracking-wider rounded-full shadow-lg">
+              Hiking Trail &amp; Road Access
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-amber-400 text-xs font-mono font-semibold">
+                <Building2 className="w-4 h-4" />
+                <span>Trail 3 &bull; Trail 5 &bull; Scenic Road</span>
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-white group-hover:text-amber-300 transition">
+                Scenic Mountain Drive &amp; Trailhead Approach
+              </h2>
+
+              <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed">
+                Accessible via a smooth 25-minute drive from Sector F-6 and Islamabad Blue Area past Daman-e-Koh. Popular stop for hikers summiting from Trail 3 and Trail 5 looking for hot karahi and scenic refreshments.
+              </p>
+
+              <div className="space-y-2 text-xs text-neutral-400 font-mono pt-2">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span className="text-neutral-200">25 Mins from F-6 Markaz / Faisal Mosque via Pir Sohawa Rd</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Phone className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <a href="tel:+92512821122" className="text-amber-400 font-bold hover:underline">+92 51 282 1122</a>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span>Ample Dedicated Parking with Valet Service</span>
+                </div>
+              </div>
+
+              <div className="pt-4 flex flex-wrap gap-3">
+                <button
+                  onClick={() => navigate('/menu')}
+                  className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-serif font-bold text-xs uppercase tracking-wider rounded-xl transition cursor-pointer shadow-md"
+                >
+                  Explore 400+ Menu
+                </button>
+                <button
+                  onClick={() => navigate('/deals')}
+                  className="px-4 py-2.5 bg-black/60 hover:bg-neutral-800 text-neutral-300 text-xs font-mono rounded-xl border border-neutral-700 transition flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Tag className="w-3.5 h-3.5 text-amber-400" />
+                  <span>View Family Deals</span>
+                </button>
               </div>
             </div>
           </div>
@@ -237,7 +236,7 @@ export function LocationsPage({ navigate }: LocationsPageProps) {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by country, city (e.g. Dubai, London, Tokyo, Paris)..."
+                placeholder="Search trails, terraces, or directions (e.g. Trail 3, Pir Sohawa)..."
                 className="w-full pl-10 pr-4 py-2 bg-black border border-neutral-800 rounded-xl text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-amber-400 transition"
               />
             </div>
