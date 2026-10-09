@@ -120,28 +120,46 @@ function getInitialSeedData(): DatabaseSchema {
 
   const initialBlogCategories: BlogCategory[] = [
     {
-      id: 'bcat-local-seo',
-      name: 'Local SEO & Google Maps',
-      slug: 'local-seo',
-      description: 'Mastering proximity ranking, Google Business Profile optimization, and local citation architecture.'
+      id: 'bcat-margalla-hills',
+      name: 'Margalla Hills',
+      slug: 'margalla-hills',
+      description: 'Stories, viewpoints, and scenic dining on the Margalla Hills ridgeline.'
     },
     {
-      id: 'bcat-schema-technical',
-      name: 'Schema & Technical SEO',
-      slug: 'technical-seo',
-      description: 'Structured data implementation, JSON-LD schemas, crawl budgeting, and Core Web Vitals engineering.'
+      id: 'bcat-hiking-trails',
+      name: 'Hiking & Trails',
+      slug: 'hiking-trails',
+      description: 'Guides to Trail 3, Trail 5, Trail 2, and mountain hiking routes in Islamabad.'
     },
     {
-      id: 'bcat-keyword-intent',
-      name: 'Keyword Research & Search Intent',
-      slug: 'keyword-research',
-      description: 'Search intent classification, long-tail clustering, and topical authority frameworks.'
+      id: 'bcat-islamabad-travel',
+      name: 'Islamabad Travel',
+      slug: 'islamabad-travel',
+      description: 'Travel tips, itineraries, and exploring the federal capital of Pakistan.'
     },
     {
-      id: 'bcat-culinary-seo',
-      name: 'Restaurant & Hospitality SEO',
-      slug: 'hospitality-seo',
-      description: 'Strategies for menu indexing, dining search queries, programmatic catering pages, and food blogging.'
+      id: 'bcat-restaurants-food',
+      name: 'Restaurants & Food',
+      slug: 'restaurants-food',
+      description: 'Authentic charcoal BBQ, Shinwari karahi, fine dining, and local cuisine reviews.'
+    },
+    {
+      id: 'bcat-places-to-visit',
+      name: 'Places to Visit',
+      slug: 'places-to-visit',
+      description: 'Must-visit attractions, monuments, viewpoints, and hidden gems in Islamabad.'
+    },
+    {
+      id: 'bcat-nature-wildlife',
+      name: 'Nature & Wildlife',
+      slug: 'nature-wildlife',
+      description: 'Flora, fauna, birdwatching, and national park biodiversity of Margalla Hills.'
+    },
+    {
+      id: 'bcat-travel-guides',
+      name: 'Travel Guides',
+      slug: 'travel-guides',
+      description: 'Comprehensive travel guides, seasonal packing, and visitor recommendations.'
     }
   ];
 
