@@ -93,6 +93,11 @@ const ROUTE_META: Record<string, { title: string; desc: string }> = {
  */
 export function useSEORuntime(currentPath: string) {
   useEffect(() => {
+    // If on a specific blog post detail page, let BlogPostDetailPage manage the exact article SEO tags
+    if (currentPath.startsWith('/blog/') && currentPath !== '/blog') {
+      return;
+    }
+
     const config = getStoredAnalyticsConfig();
 
     // 1. Determine Title & Description
@@ -112,7 +117,7 @@ export function useSEORuntime(currentPath: string) {
         };
       } else {
         meta = {
-          title: 'Margalla Hills | Hilltop Dining & Resort Islamabad',
+          title: 'Margalla Hills | Luxury Dining & Hilltop Restaurant Islamabad',
           desc: 'Luxury hilltop dining in Islamabad with 400+ dishes, authentic barbecue, and family deals.'
         };
       }
