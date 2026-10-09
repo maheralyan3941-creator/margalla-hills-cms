@@ -38,26 +38,23 @@ export function SEOLaboratoryPage({ navigate }: SEOLaboratoryPageProps) {
   const [implementedNotification, setImplementedNotification] = useState<string | null>(null);
 
   // Phase 1: SERP Editor & Live Implementation
-  const [testTitle, setTestTitle] = useState('Margalla Hills | Luxury Dining & Global Flagships Across 50+ Countries');
-  const [testDescription, setTestDescription] = useState('Experience royal dining at Margalla Hills. Headquartered at our Downtown Dubai Flagship and Islamabad Mountain Sanctuary, operating in 50+ countries worldwide.');
-  const [testKeyword, setTestKeyword] = useState('luxury dining 50 countries');
-  const [testSlug, setTestSlug] = useState('locations');
+  const [testTitle, setTestTitle] = useState('Margalla Hills | Luxury Dining & Hilltop Restaurant Islamabad');
+  const [testDescription, setTestDescription] = useState('Experience scenic mountain dining at Margalla Hills Islamabad with authentic charcoal BBQ, Shinwari karahi, and panoramic capital views.');
+  const [testKeyword, setTestKeyword] = useState('margalla hills restaurant islamabad');
+  const [testSlug, setTestSlug] = useState('menu');
   const [devicePreview, setDevicePreview] = useState<'desktop' | 'mobile'>('desktop');
 
   // Phase 2: Sitemap & Robots
-  const [testPath, setTestPath] = useState('/locations');
+  const [testPath, setTestPath] = useState('/menu');
   const [robotsResult, setRobotsResult] = useState<string | null>(null);
 
   // Phase 3: On-page Content
-  const [testContent, setTestContent] = useState(`# Global Fine Dining Sanctuary Across 50+ Countries
+  const [testContent, setTestContent] = useState(`# Hilltop Fine Dining & BBQ in Margalla Hills Islamabad
 
-Welcome to Margalla Hills, the premier international gastronomy group. From our **Downtown Dubai Global Flagship** in the United Arab Emirates to our serene mountain resort on the **Margalla Hills ridgeline in Islamabad**, we blend authentic Himalayan culinary craftsmanship with world-class hospitality.
+Welcome to Margalla Hills Restaurant & Resort, perched along Pir Sohawa Road overlooking Islamabad. We blend authentic Himalayan charcoal grilling, Shinwari karahi craftsmanship, and scenic open-air pavilions.
 
-## Royal Kashmiri Flavors & Artisanal Saffron
-Every single dish is curated using single-origin saffron sourced directly from certified organic fields. Our live charcoal barbecue, copper handi curries, and stone-baked artisanal breads celebrate four centuries of royal heritage.
-
-### Global Presence in Over 50 Countries
-With bespoke private dining pavilions in Dubai, London, New York, Tokyo, Paris, and Singapore, our culinary sanctuaries offer an unforgettable escape for dignitaries and food connoisseurs alike.`);
+## Royal Flavors & Artisanal Spices
+Every dish is prepared using fresh mountain spices, clay-tandoor flatbreads, and authentic desi ghee. Our live barbecue, copper handi curries, and scenic dining gazebos offer an unforgettable escape for families and food enthusiasts.`);
 
   // Phase 4: Schema.org
   const [schemaType, setSchemaType] = useState<'Restaurant' | 'MenuItem' | 'Article' | 'FAQPage' | 'LocalBusiness'>('Restaurant');
