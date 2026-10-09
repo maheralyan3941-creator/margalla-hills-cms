@@ -26,7 +26,7 @@ export function Module9ProgrammaticSEO({ templates, onGeneratePages }: Module9Pr
   // Template builder state
   const [keywordPattern, setKeywordPattern] = useState('Bespoke Culinary Catering');
   const [citiesList, setCitiesList] = useState(
-    'Islamabad\nRawalpindi\nLahore\nKarachi\nPeshawar\nMurree\nFaisalabad\nSialkot\nDubai\nDoha\nLondon'
+    'Islamabad\nRawalpindi\nLahore\nKarachi\nPeshawar\nMurree\nFaisalabad\nSialkot\nAbbottabad\nWah Cantt\nGujranwala'
   );
   const [titleTemplate, setTitleTemplate] = useState('{keyword} in {city} | Margalla Hills Luxury Banquets');
   const [metaTemplate, setMetaTemplate] = useState(
