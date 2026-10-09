@@ -420,7 +420,15 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
   const handleSavePost = async (e: React.FormEvent) => {
     e.preventDefault();
     const finalH1 = h1Title.trim() || title.trim();
-    const finalSlug = slug.trim().toLowerCase();
+    const finalSlug = slug
+      .trim()
+      .toLowerCase()
+      .replace(/^https?:\/\/[^\/]+/i, '')
+      .replace(/^\/?blog\/?/i, '')
+      .replace(/^\/+/, '')
+      .replace(/\/+$/, '')
+      .replace(/[^a-z0-9\-]/g, '-')
+      .replace(/-+/g, '-');
 
     if (!finalH1 || !finalSlug) {
       setFormError('H1 Title and URL slug are required.');
@@ -478,10 +486,10 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
     try {
       if (editingPostId) {
         await api.updateBlogPost(editingPostId, postPayload);
-        if (showToast) showToast(`Article "${finalH1}" updated successfully!`);
+        if (showToast) showToast(`Article "${finalH1}" updated successfully! (/blog/${finalSlug})`);
       } else {
         await api.createBlogPost(postPayload);
-        if (showToast) showToast(`New article "${finalH1}" published live!`);
+        if (showToast) showToast(`New article "${finalH1}" published live at /blog/${finalSlug}!`);
       }
       setIsEditing(false);
       await fetchPosts();
@@ -635,7 +643,13 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
                       type="text"
                       required
                       value={slug}
-                      onChange={(e) => setSlug(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value
+                          .replace(/^https?:\/\/[^\/]+/i, '')
+                          .replace(/^\/?blog\/?/i, '')
+                          .replace(/^\/+/, '');
+                        setSlug(val);
+                      }}
                       placeholder="best-restaurants-islamabad"
                       className="w-full px-3.5 py-2.5 bg-black border border-neutral-800 rounded-r-xl text-xs text-amber-400 font-mono focus:outline-none focus:border-amber-400"
                     />
@@ -1148,10 +1162,12 @@ export function ModuleBlogPublishing({ onNavigateToPost, showToast }: ModuleBlog
                 <div className="flex items-center gap-2 shrink-0">
                   <button
                     onClick={() => {
+                      const cleanSlug = (post.slug || '').replace(/^\/+/, '').replace(/^blog\//, '').replace(/\/+$/, '');
+                      const targetUrl = `/blog/${cleanSlug}`;
                       if (onNavigateToPost) {
-                        onNavigateToPost(post.slug);
+                        onNavigateToPost(cleanSlug);
                       } else {
-                        window.location.href = `/blog/${post.slug}`;
+                        window.location.href = targetUrl;
                       }
                     }}
                     className="p-2 bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white rounded-lg text-xs flex items-center gap-1 transition cursor-pointer border border-neutral-800"
