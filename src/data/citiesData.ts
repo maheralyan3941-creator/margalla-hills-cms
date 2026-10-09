@@ -104,49 +104,49 @@ export const CITIES_DATA: Record<string, CityCateringData> = {
       { q: 'Can you provide floral tablescaping and cutlery matching the saffron aesthetic?', a: 'Yes, our luxury event styling team supplies custom gold-rimmed porcelain, linen, and hand-blown glassware.' }
     ]
   },
-  'dubai': {
-    slug: 'dubai',
-    name: 'Dubai',
-    region: 'Emirate of Dubai',
-    country: 'United Arab Emirates',
+  'islamabad': {
+    slug: 'islamabad',
+    name: 'Islamabad Federal Capital',
+    region: 'ICT',
+    country: 'Pakistan',
     heroImage: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1200&q=80',
     guestCountCapacity: '30 to 800+ Guests',
-    popularVenues: ['Burj Khalifa Sky Residences', 'Palm Jumeirah Beach Mansions', 'DIFC Luxury Salons'],
-    localHighlights: 'Opulent royal saffron feasts, live charcoal tandoor stations, zero-proof botanical mixology, and 24K edible gold leaf presentations.',
+    popularVenues: ['Diplomatic Enclave Residences', 'F-6 / F-7 Markaz Terraces', 'Margalla Ridge Private Pavilions'],
+    localHighlights: 'Opulent royal saffron feasts, live charcoal barbecue stations, clay-pot Shinwari karahi, and scenic hilltop pavilions.',
     privateSommelierService: false,
     liveTandoorAvailable: true,
     faqList: [
-      { q: 'Do you offer non-alcoholic botanical pairing menus in Dubai?', a: 'Yes, our master beverage curator creates zero-proof aged tea, saffron hydrosol, and rare botanical pairings.' }
+      { q: 'Do you offer on-site catering across Islamabad and Diplomatic Enclave?', a: 'Yes, our culinary brigade provides full on-site live BBQ, clay handi stations, and luxury banquet presentation.' }
     ]
   },
-  'downtown-dubai': {
-    slug: 'downtown-dubai',
-    name: 'Downtown Dubai & DIFC',
-    region: 'Dubai',
-    country: 'United Arab Emirates',
+  'rawalpindi': {
+    slug: 'rawalpindi',
+    name: 'Rawalpindi & Bahria Town',
+    region: 'Punjab',
+    country: 'Pakistan',
     heroImage: 'https://images.unsplash.com/photo-1528702748617-c64d49f918af?auto=format&fit=crop&w=1200&q=80',
     guestCountCapacity: '25 to 500 Guests',
-    popularVenues: ['DIFC Art Galleries', 'Opera District Penthouses', 'Downtown Luxury Terraces'],
-    localHighlights: 'Executive corporate galas, VIP boardroom dinners, and high-altitude rooftop receptions with panoramic skyline views.',
+    popularVenues: ['Bahria Town Banquets', 'DHA Phase 2 Lawns', 'Saddar Executive Mansions'],
+    localHighlights: 'Executive wedding banquets, VIP corporate dinners, and live seekh kebab and sajji charcoal stations.',
     privateSommelierService: false,
     liveTandoorAvailable: true,
     faqList: [
-      { q: 'How quickly can you organize an executive corporate banquet in DIFC?', a: 'With 72 hours notice, our Downtown Dubai culinary hub can mobilize full bespoke banqueting.' }
+      { q: 'How quickly can you organize an executive banquet in Rawalpindi?', a: 'With 48 hours notice, our mobile banquet team can mobilize full bespoke banqueting across the Twin Cities.' }
     ]
   },
-  'palm-jumeirah': {
-    slug: 'palm-jumeirah',
-    name: 'Palm Jumeirah',
-    region: 'Dubai',
-    country: 'United Arab Emirates',
+  'murree': {
+    slug: 'murree',
+    name: 'Murree & Bhurban Hills',
+    region: 'Punjab',
+    country: 'Pakistan',
     heroImage: 'https://images.unsplash.com/photo-1580674684081-7617fbf3d745?auto=format&fit=crop&w=1200&q=80',
     guestCountCapacity: '20 to 600 Guests',
-    popularVenues: ['Palm Jumeirah Frond Villas', 'Private Superyacht Charters', 'Beachfront Luxury Pavilions'],
-    localHighlights: 'Seaside charcoal grilling, Breton blue lobster saffron bisques, and private villa celebration feasts.',
+    popularVenues: ['Bhurban Private Chalets', 'Mall Road Historical Estates', 'Patriata Pine Lodges'],
+    localHighlights: 'Mountain pine-smoke charcoal barbecue, piping hot mutton karahi, and high-altitude tea & kahwa ceremonies.',
     privateSommelierService: false,
     liveTandoorAvailable: true,
     faqList: [
-      { q: 'Can you cater directly onto luxury private yachts docked in Dubai Marina?', a: 'Yes, our yacht hospitality team specializes in marine-compliant galley preparation and deck banquet presentation.' }
+      { q: 'Can you cater private retreats and family celebrations in Murree?', a: 'Yes, we provide full thermal-insulated transportation and live on-site chefs for hill-station private retreats.' }
     ]
   },
   'beverly-hills': {
