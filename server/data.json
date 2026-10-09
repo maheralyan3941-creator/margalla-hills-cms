@@ -7,8 +7,8 @@
       "role": "SUPER_ADMIN",
       "status": "active",
       "createdAt": "2026-01-10T09:00:00Z",
-      "lastLogin": "2026-09-22T07:37:12.844Z",
-      "passwordHash": "$2b$10$U8r00RQKj9OftYt7Xf.x/Or81Xp59DbIOLe9fj67K9iFJv.Xv03nW"
+      "lastLogin": "2026-09-27T12:03:32.321Z",
+      "passwordHash": "$2b$10$Uni.BcMFl2TUFIMt5LuruOJ77CngxhrzInTbMNDGWwfzKJPRs/mdO"
     },
     {
       "id": "usr-saffron-superadmin",
@@ -18,7 +18,7 @@
       "status": "active",
       "createdAt": "2026-01-10T09:00:00Z",
       "lastLogin": "2026-08-31T02:00:00Z",
-      "passwordHash": "$2b$10$U8r00RQKj9OftYt7Xf.x/Or81Xp59DbIOLe9fj67K9iFJv.Xv03nW"
+      "passwordHash": "$2b$10$Uni.BcMFl2TUFIMt5LuruOJ77CngxhrzInTbMNDGWwfzKJPRs/mdO"
     },
     {
       "id": "usr-saffron-chef",
@@ -28,7 +28,7 @@
       "status": "active",
       "createdAt": "2026-01-12T10:00:00Z",
       "lastLogin": "2026-08-30T16:00:00Z",
-      "passwordHash": "$2b$10$U8r00RQKj9OftYt7Xf.x/OGNBsy8AC3cP9vM1lRdS4T0PQuh9FfMK"
+      "passwordHash": "$2b$10$Uni.BcMFl2TUFIMt5LuruOkDvtk.esYm.xtbDmuH/o3oBb1jbXmtC"
     },
     {
       "id": "usr-saffron-editor",
@@ -38,7 +38,7 @@
       "status": "active",
       "createdAt": "2026-01-15T12:00:00Z",
       "lastLogin": "2026-08-30T18:00:00Z",
-      "passwordHash": "$2b$10$U8r00RQKj9OftYt7Xf.x/OviAqK7r0WZcMx1p8udhG4OOSL5liD52"
+      "passwordHash": "$2b$10$Uni.BcMFl2TUFIMt5LuruOC8Y8dnU7bebQ3WtA7arqCIA0fvmtjoG"
     },
     {
       "id": "usr-superadmin",
@@ -48,7 +48,7 @@
       "status": "active",
       "createdAt": "2026-01-15T09:00:00Z",
       "lastLogin": "2026-08-30T14:20:00Z",
-      "passwordHash": "$2b$10$U8r00RQKj9OftYt7Xf.x/OnSrECH9rcQixGKE6VoB4a86jZUGbBi2"
+      "passwordHash": "$2b$10$Uni.BcMFl2TUFIMt5LuruOMcA/w9ttCW7MErDhp9.tNyaEMgCm/Hi"
     },
     {
       "id": "usr-admin",
@@ -58,7 +58,7 @@
       "status": "active",
       "createdAt": "2026-02-01T10:30:00Z",
       "lastLogin": "2026-08-29T11:15:00Z",
-      "passwordHash": "$2b$10$U8r00RQKj9OftYt7Xf.x/OnSrECH9rcQixGKE6VoB4a86jZUGbBi2"
+      "passwordHash": "$2b$10$Uni.BcMFl2TUFIMt5LuruOMcA/w9ttCW7MErDhp9.tNyaEMgCm/Hi"
     },
     {
       "id": "usr-editor",
@@ -68,7 +68,7 @@
       "status": "active",
       "createdAt": "2026-03-10T12:00:00Z",
       "lastLogin": "2026-08-28T16:45:00Z",
-      "passwordHash": "$2b$10$U8r00RQKj9OftYt7Xf.x/OzepROznZdy39ejG0TtjD9ltn6XhP99q"
+      "passwordHash": "$2b$10$Uni.BcMFl2TUFIMt5LuruOONipnIRlgC99BdyPvvgXcG4iPrRsXlC"
     }
   ],
   "menuItems": [
@@ -21264,6 +21264,21 @@
   ],
   "blogPosts": [
     {
+      "title": "Top 10 Scenic Restaurants in Margalla Hills",
+      "slug": "top-10-scenic-restaurants-margalla-hills",
+      "excerpt": "A test excerpt for Margalla Hills",
+      "content": "# Test content",
+      "featuredImage": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+      "category": "hospitality-seo",
+      "status": "published",
+      "id": "post-1790510612338",
+      "publishedAt": "2026-09-27T12:03:32.338Z",
+      "updatedAt": "2026-10-09T17:28:00.382Z",
+      "h1_title": "Top 10 Scenic Restaurants in Margalla Hills",
+      "seo_title": "Top 10 Scenic Restaurants in Margalla Hills",
+      "meta_desc": "A test excerpt for Margalla Hills"
+    },
+    {
       "id": "post-local-seo-guide-2026",
       "title": "The Comprehensive Restaurant Local SEO Guide: Dominating Google Local Pack in 2026",
       "slug": "restaurant-local-seo-guide",
@@ -21285,31 +21300,34 @@
       },
       "status": "published",
       "publishedAt": "2026-03-01T08:00:00Z",
-      "updatedAt": "2026-08-20T10:30:00Z",
+      "updatedAt": "2026-10-09T17:28:00.372Z",
       "readTimeMinutes": 6,
       "relatedPostIds": [
         "post-schema-markup-culinary",
         "post-search-intent-demystified"
       ],
       "seo": {
-        "seoTitle": "The Complete Restaurant Local SEO Guide (2026 Blueprint)",
-        "metaDescription": "Master local SEO for restaurants: learn Google Maps ranking factors, GBP optimization, local citations, and on-page geo signals to attract high-intent diners.",
         "slug": "restaurant-local-seo-guide",
+        "ogImage": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
+        "ogTitle": "The Complete Restaurant Local SEO Guide for 2026",
+        "seoTitle": "The Complete Restaurant Local SEO Guide (2026 Blueprint)",
+        "schemaType": "Article",
+        "robotsIndex": true,
+        "canonicalUrl": "/blog/restaurant-local-seo-guide",
         "focusKeyword": "restaurant local seo",
+        "robotsFollow": true,
+        "searchIntent": "Informational",
+        "ogDescription": "Step-by-step masterclass on ranking your culinary business in Google Local Pack.",
+        "metaDescription": "Master local SEO for restaurants: learn Google Maps ranking factors, GBP optimization, local citations, and on-page geo signals to attract high-intent diners.",
         "secondaryKeywords": [
           "google maps restaurant ranking",
           "local pack seo",
           "restaurant seo strategy"
-        ],
-        "canonicalUrl": "/blog/restaurant-local-seo-guide",
-        "robotsIndex": true,
-        "robotsFollow": true,
-        "ogTitle": "The Complete Restaurant Local SEO Guide for 2026",
-        "ogDescription": "Step-by-step masterclass on ranking your culinary business in Google Local Pack.",
-        "ogImage": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
-        "schemaType": "Article",
-        "searchIntent": "Informational"
-      }
+        ]
+      },
+      "h1_title": "The Comprehensive Restaurant Local SEO Guide: Dominating Google Local Pack in 2026",
+      "seo_title": "The Complete Restaurant Local SEO Guide (2026 Blueprint)",
+      "meta_desc": "Master local SEO for restaurants: learn Google Maps ranking factors, GBP optimization, local citations, and on-page geo signals to attract high-intent diners."
     },
     {
       "id": "post-schema-markup-culinary",
@@ -21333,31 +21351,34 @@
       },
       "status": "published",
       "publishedAt": "2026-04-10T09:30:00Z",
-      "updatedAt": "2026-08-25T14:15:00Z",
+      "updatedAt": "2026-10-09T17:28:00.362Z",
       "readTimeMinutes": 7,
       "relatedPostIds": [
         "post-local-seo-guide-2026",
         "post-search-intent-demystified"
       ],
       "seo": {
-        "seoTitle": "Schema Markup for Food & Beverage Websites | Rich Snippet Tutorial",
-        "metaDescription": "Step-by-step guide to implementing Schema.org FoodEstablishment, MenuItem, and BreadcrumbList JSON-LD structured data for higher CTR in Google SERPs.",
         "slug": "schema-markup-culinary-rich-snippets",
+        "ogImage": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80",
+        "ogTitle": "Schema Markup for Food & Beverage Websites",
+        "seoTitle": "Schema Markup for Food & Beverage Websites | Rich Snippet Tutorial",
+        "schemaType": "Article",
+        "robotsIndex": true,
+        "canonicalUrl": "/blog/schema-markup-culinary-rich-snippets",
         "focusKeyword": "restaurant schema markup",
+        "robotsFollow": true,
+        "searchIntent": "Informational",
+        "ogDescription": "Unlock rich snippets and interactive search cards with structured JSON-LD.",
+        "metaDescription": "Step-by-step guide to implementing Schema.org FoodEstablishment, MenuItem, and BreadcrumbList JSON-LD structured data for higher CTR in Google SERPs.",
         "secondaryKeywords": [
           "menu item schema",
           "food establishment structured data",
           "rich snippets json-ld"
-        ],
-        "canonicalUrl": "/blog/schema-markup-culinary-rich-snippets",
-        "robotsIndex": true,
-        "robotsFollow": true,
-        "ogTitle": "Schema Markup for Food & Beverage Websites",
-        "ogDescription": "Unlock rich snippets and interactive search cards with structured JSON-LD.",
-        "ogImage": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80",
-        "schemaType": "Article",
-        "searchIntent": "Informational"
-      }
+        ]
+      },
+      "h1_title": "Schema Markup for Food & Beverage: Unlocking Rich Snippets and FoodEstablishment Markup",
+      "seo_title": "Schema Markup for Food & Beverage Websites | Rich Snippet Tutorial",
+      "meta_desc": "Step-by-step guide to implementing Schema.org FoodEstablishment, MenuItem, and BreadcrumbList JSON-LD structured data for higher CTR in Google SERPs."
     },
     {
       "id": "post-search-intent-demystified",
@@ -21381,57 +21402,78 @@
       },
       "status": "published",
       "publishedAt": "2026-05-05T11:00:00Z",
-      "updatedAt": "2026-08-28T09:00:00Z",
+      "updatedAt": "2026-10-09T17:28:00.349Z",
       "readTimeMinutes": 5,
       "relatedPostIds": [
         "post-local-seo-guide-2026",
         "post-schema-markup-culinary"
       ],
       "seo": {
-        "seoTitle": "Search Intent Demystified: Master SEO Keyword Intent Mapping",
-        "metaDescription": "Learn how to classify informational, commercial, transactional, and navigational search intent to build content that ranks and converts searchers into diners.",
         "slug": "search-intent-culinary-user-journeys",
+        "ogImage": "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1200&q=80",
+        "ogTitle": "Search Intent Demystified - Complete SEO Playbook",
+        "seoTitle": "Search Intent Demystified: Master SEO Keyword Intent Mapping",
+        "schemaType": "Article",
+        "robotsIndex": true,
+        "canonicalUrl": "/blog/search-intent-culinary-user-journeys",
         "focusKeyword": "search intent seo",
+        "robotsFollow": true,
+        "searchIntent": "Informational",
+        "ogDescription": "Map user journeys from curious queries to high-converting reservations.",
+        "metaDescription": "Learn how to classify informational, commercial, transactional, and navigational search intent to build content that ranks and converts searchers into diners.",
         "secondaryKeywords": [
           "keyword intent classification",
           "user intent search engine",
           "informational vs transactional keywords"
-        ],
-        "canonicalUrl": "/blog/search-intent-culinary-user-journeys",
-        "robotsIndex": true,
-        "robotsFollow": true,
-        "ogTitle": "Search Intent Demystified - Complete SEO Playbook",
-        "ogDescription": "Map user journeys from curious queries to high-converting reservations.",
-        "ogImage": "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1200&q=80",
-        "schemaType": "Article",
-        "searchIntent": "Informational"
-      }
+        ]
+      },
+      "h1_title": "Search Intent Demystified: Mapping User Journeys from Culinary Curiosity to Table Reservation",
+      "seo_title": "Search Intent Demystified: Master SEO Keyword Intent Mapping",
+      "meta_desc": "Learn how to classify informational, commercial, transactional, and navigational search intent to build content that ranks and converts searchers into diners."
     }
   ],
   "blogCategories": [
     {
-      "id": "bcat-local-seo",
-      "name": "Local SEO & Google Maps",
-      "slug": "local-seo",
-      "description": "Mastering proximity ranking, Google Business Profile optimization, and local citation architecture."
+      "id": "bcat-margalla-hills",
+      "name": "Margalla Hills",
+      "slug": "margalla-hills",
+      "description": "Stories, viewpoints, and scenic dining on the Margalla Hills ridgeline."
     },
     {
-      "id": "bcat-schema-technical",
-      "name": "Schema & Technical SEO",
-      "slug": "technical-seo",
-      "description": "Structured data implementation, JSON-LD schemas, crawl budgeting, and Core Web Vitals engineering."
+      "id": "bcat-hiking-trails",
+      "name": "Hiking & Trails",
+      "slug": "hiking-trails",
+      "description": "Guides to Trail 3, Trail 5, Trail 2, and mountain hiking routes in Islamabad."
     },
     {
-      "id": "bcat-keyword-intent",
-      "name": "Keyword Research & Search Intent",
-      "slug": "keyword-research",
-      "description": "Search intent classification, long-tail clustering, and topical authority frameworks."
+      "id": "bcat-islamabad-travel",
+      "name": "Islamabad Travel",
+      "slug": "islamabad-travel",
+      "description": "Travel tips, itineraries, and exploring the federal capital of Pakistan."
     },
     {
-      "id": "bcat-culinary-seo",
-      "name": "Restaurant & Hospitality SEO",
-      "slug": "hospitality-seo",
-      "description": "Strategies for menu indexing, dining search queries, programmatic catering pages, and food blogging."
+      "id": "bcat-restaurants-food",
+      "name": "Restaurants & Food",
+      "slug": "restaurants-food",
+      "description": "Authentic charcoal BBQ, Shinwari karahi, fine dining, and local cuisine reviews."
+    },
+    {
+      "id": "bcat-places-to-visit",
+      "name": "Places to Visit",
+      "slug": "places-to-visit",
+      "description": "Must-visit attractions, monuments, viewpoints, and hidden gems in Islamabad."
+    },
+    {
+      "id": "bcat-nature-wildlife",
+      "name": "Nature & Wildlife",
+      "slug": "nature-wildlife",
+      "description": "Flora, fauna, birdwatching, and national park biodiversity of Margalla Hills."
+    },
+    {
+      "id": "bcat-travel-guides",
+      "name": "Travel Guides",
+      "slug": "travel-guides",
+      "description": "Comprehensive travel guides, seasonal packing, and visitor recommendations."
     }
   ],
   "caseStudies": [
@@ -21657,27 +21699,37 @@
       "status": "Active",
       "notes": "Local restaurant directory inclusion under artisanal dining category.",
       "dateAdded": "2026-06-02"
+    },
+    {
+      "referringDomain": "forbes.com",
+      "targetUrl": "https://margallahills.com",
+      "anchorText": "best fine dining in Islamabad",
+      "domainAuthority": 94,
+      "pageAuthority": 82,
+      "linkType": "DOFOLLOW",
+      "status": "LIVE",
+      "id": "bl-1790512067960"
     }
   ],
   "seoSettings": {
-    "siteName": "Saffron & Sage Artisanal Kitchen",
-    "siteUrl": "https://saffronandsage.seolab.dev",
+    "siteName": "Margalla Hills Artisanal Luxury",
+    "siteUrl": "https://margallahills.com",
     "tagline": "Modern Culinary Excellence & SEO Practice Laboratory",
     "defaultMetaDescription": "Saffron & Sage is a modern artisanal culinary showcase and interactive SEO practice laboratory. Explore heritage recipes, structured data schemas, and SEO experiments.",
     "defaultOgImage": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
     "businessInfo": {
       "name": "Saffron & Sage Artisanal Kitchen (Demo Laboratory)",
-      "legalName": "Saffron & Sage Culinary Arts & SEO Lab Ltd.",
-      "tagline": "Modern Culinary Experience & SEO Benchmarking Platform",
+      "email": "hello@saffronandsage.seolab.dev",
+      "phone": "+1 (555) 839-7361",
       "address": {
-        "street": "450 Heritage Spice Way, Suite 100",
         "city": "Metropolis",
         "state": "NY",
-        "postalCode": "10001",
-        "country": "US"
+        "street": "450 Heritage Spice Way, Suite 100",
+        "country": "US",
+        "postalCode": "10001"
       },
-      "phone": "+1 (555) 839-7361",
-      "email": "hello@saffronandsage.seolab.dev",
+      "tagline": "Modern Culinary Experience & SEO Benchmarking Platform",
+      "legalName": "Saffron & Sage Culinary Arts & SEO Lab Ltd.",
       "priceRange": "$$",
       "cuisineType": "Modern Himalayan & Artisanal Indian",
       "openingHours": [
@@ -21689,29 +21741,31 @@
       "googlePlaceId": "ChIJN1t_tDeuEmsRUsoyG83frY4"
     },
     "googleAnalyticsId": "G-SEO98234LAB",
-    "googleSearchConsoleVerification": "google-site-verification=gsc_seolab_benchmarking_token_2026",
+    "googleSearchConsoleVerification": "google-site-verification=client_live_seo_verified_9999",
     "robotsTxtContent": "User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n\nSitemap: https://saffronandsage.seolab.dev/sitemap.xml",
     "redirects": [
       {
         "id": "red-1",
-        "source": "/old-menu.pdf",
-        "destination": "/menu",
+        "hits": 142,
         "type": 301,
         "active": true,
-        "hits": 142,
+        "source": "/old-menu.pdf",
+        "destination": "/menu",
         "lastAccessed": "2026-08-30T10:00:00Z"
       },
       {
         "id": "red-2",
-        "source": "/blog/local-seo-tips",
-        "destination": "/blog/restaurant-local-seo-guide",
+        "hits": 89,
         "type": 301,
         "active": true,
-        "hits": 89,
+        "source": "/blog/local-seo-tips",
+        "destination": "/blog/restaurant-local-seo-guide",
         "lastAccessed": "2026-08-29T16:20:00Z"
       }
     ],
-    "isDemoNoticeEnabled": true
+    "isDemoNoticeEnabled": true,
+    "gscVerificationCode": "google-site-verification=abc123xyz",
+    "ga4TrackingId": "G-TEST12345"
   },
   "analytics": {
     "dateRange": "Last 28 Days",
