@@ -6,28 +6,86 @@ import { BlogPost } from '../types';
 import { api } from '../lib/api';
 import { cleanAndFormatPastedHtml, isHtmlContent } from '../lib/richTextCleaner';
 import { Clock, Calendar, ArrowLeft, Tag, ChevronRight, Sparkles, CheckCircle2 } from 'lucide-react';
+import { NotFoundPage } from './NotFoundPage';
 
 interface BlogPostDetailPageProps {
   slug: string;
   navigate: (path: string) => void;
   posts?: BlogPost[];
+  fallbackToNotFound?: boolean;
 }
 
-export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: BlogPostDetailPageProps) {
+export function BlogPostDetailPage({ slug, navigate, posts: initialPosts, fallbackToNotFound }: BlogPostDetailPageProps) {
   const [posts, setPosts] = useState<BlogPost[]>(initialPosts || []);
   const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    let isMounted = true;
+    const clean = (s: string) => decodeURIComponent(s || '').replace(/^\/+/, '').replace(/\/+$/, '').replace(/^blog\//, '').trim().toLowerCase();
+    const targetSlug = clean(slug);
+
+    const findMatch = (list: BlogPost[]) => {
+      return list.find(p => {
+        const pSlug = clean(p.slug);
+        return pSlug === targetSlug || p.slug === slug || p.id === slug || p.id === targetSlug;
+      });
+    };
+
+    setLoading(true);
+
     if (initialPosts && initialPosts.length > 0) {
-      const found = initialPosts.find(p => p.slug === slug);
-      setPost(found || null);
-    } else {
-      api.getBlogPosts().then(allPosts => {
-        setPosts(allPosts);
-        const found = allPosts.find(p => p.slug === slug);
-        setPost(found || null);
-      }).catch(() => {});
+      const found = findMatch(initialPosts);
+      if (found) {
+        setPost(found);
+        setLoading(false);
+        return;
+      }
     }
+
+    // Fetch all posts and search
+    api.getBlogPosts().then(allPosts => {
+      if (!isMounted) return;
+      setPosts(allPosts);
+      const found = findMatch(allPosts);
+      if (found) {
+        setPost(found);
+        setLoading(false);
+      } else {
+        // Fallback: try fetching by slug directly from server/database
+        api.getBlogPostBySlug(targetSlug).then(single => {
+          if (!isMounted) return;
+          if (single) {
+            setPost(single);
+            setPosts(prev => [single, ...prev]);
+          } else {
+            setPost(null);
+          }
+          setLoading(false);
+        }).catch(() => {
+          if (isMounted) {
+            setPost(null);
+            setLoading(false);
+          }
+        });
+      }
+    }).catch(() => {
+      // Direct fallback
+      api.getBlogPostBySlug(targetSlug).then(single => {
+        if (!isMounted) return;
+        setPost(single || null);
+        setLoading(false);
+      }).catch(() => {
+        if (isMounted) {
+          setPost(null);
+          setLoading(false);
+        }
+      });
+    });
+
+    return () => {
+      isMounted = false;
+    };
   }, [slug, initialPosts]);
 
   // Check if content is HTML from rich text / Google Docs paste
@@ -153,7 +211,21 @@ export function BlogPostDetailPage({ slug, navigate, posts: initialPosts }: Blog
     return toc;
   }, [post?.content, isHtml, formattedContent]);
 
+  if (loading) {
+    return (
+      <div className="bg-[#0A0A0A] text-slate-300 min-h-screen flex items-center justify-center">
+        <div className="text-center py-24 space-y-4">
+          <div className="w-10 h-10 border-2 border-amber-500/30 border-t-amber-500 rounded-full animate-spin mx-auto"></div>
+          <p className="text-xs font-mono text-neutral-400 uppercase tracking-widest">Loading Live Article...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!post) {
+    if (fallbackToNotFound) {
+      return <NotFoundPage navigate={navigate} />;
+    }
     return (
       <div className="bg-[#0A0A0A] text-slate-300 min-h-screen flex items-center justify-center">
         <div className="max-w-4xl mx-auto px-4 py-20 text-center">
