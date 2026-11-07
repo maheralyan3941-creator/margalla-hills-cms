@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SEOHead } from '../components/SEOHead';
-import { MapPin, Phone, Clock, Calendar, CheckCircle2, MessageCircle, Utensils, Award } from 'lucide-react';
+import { MapPin, Phone, Clock, Calendar, CheckCircle2, MessageCircle, Utensils, Award, Mail } from 'lucide-react';
 
 interface ContactPageProps {
   navigate: (path: string) => void;
@@ -61,7 +61,7 @@ Please confirm availability and table booking.`;
     mainEntity: {
       '@type': 'Restaurant',
       name: 'Margalla Hills Restaurant & Resort',
-      telephone: '+92512800000',
+      email: 'info.margalahills@gmail.com',
       address: {
         '@type': 'PostalAddress',
         streetAddress: 'Pir Sohawa Road, Margalla Hills',
@@ -328,8 +328,10 @@ Please confirm availability and table booking.`;
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Phone className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span className="text-white text-xs">Direct Support via WhatsApp Online Desk</span>
+                  <Mail className="w-4 h-4 text-amber-400 shrink-0" />
+                  <a href="mailto:info.margalahills@gmail.com" className="text-white hover:text-amber-400 text-xs transition">
+                    info.margalahills@gmail.com
+                  </a>
                 </div>
               </div>
             </div>
