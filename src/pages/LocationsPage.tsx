@@ -196,8 +196,8 @@ export function LocationsPage({ navigate }: LocationsPageProps) {
                   <span className="text-neutral-200">25 Mins from F-6 Markaz / Faisal Mosque via Pir Sohawa Rd</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                  <a href="tel:+92512821122" className="text-amber-400 font-bold hover:underline">+92 51 282 1122</a>
+                  <Mail className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <a href="mailto:info.margalahills@gmail.com" className="text-amber-400 font-bold hover:underline">info.margalahills@gmail.com</a>
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
