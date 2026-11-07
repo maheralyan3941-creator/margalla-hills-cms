@@ -1611,7 +1611,8 @@ Sitemap: ${baseUrl}/sitemap-programmatic.xml
         "description": "Margalla Hills luxury hilltop restaurant in Islamabad featuring 400+ authentic charcoal BBQ, Shinwari karahi, and scenic dining.",
         "servesCuisine": ["Pakistani", "Barbecue", "Shinwari Karahi", "Continental", "Himalayan"],
         "priceRange": "$$",
-        "telephone": "+92-51-2821122",
+        "email": "info.margalahills@gmail.com",
+        "telephone": "+92-329-4785579",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "Pir Sohawa Road, Margalla Ridge",
