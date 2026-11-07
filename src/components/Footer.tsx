@@ -1,5 +1,5 @@
 import React from 'react';
-import { UtensilsCrossed, MapPin, Phone, Clock, Award, MessageCircle, Tag, Globe, Sparkles, Building2 } from 'lucide-react';
+import { UtensilsCrossed, MapPin, Phone, Clock, Award, MessageCircle, Tag, Globe, Sparkles, Building2, Mail } from 'lucide-react';
 
 interface FooterProps {
   navigate: (path: string) => void;
@@ -156,8 +156,9 @@ export function Footer({ navigate }: FooterProps) {
                   <MessageCircle className="w-3.5 h-3.5 fill-emerald-400" />
                   <span>WhatsApp: +92 329 4785579</span>
                 </a>
-                <a href="tel:+92512821122" className="text-amber-400 font-mono text-xs hover:underline block">
-                  Landline: +92 51 282 1122
+                <a href="mailto:info.margalahills@gmail.com" className="text-amber-400 font-mono text-xs hover:underline flex items-center gap-1">
+                  <Mail className="w-3.5 h-3.5" />
+                  <span>Email: info.margalahills@gmail.com</span>
                 </a>
               </div>
             </div>
